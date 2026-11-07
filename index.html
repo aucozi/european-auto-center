@@ -38,14 +38,6 @@
   .btn-dark{background:var(--brand);color:#fff}
   .btn-block{width:100%}
 
-  /* top bar + nav */
-  .topbar{background:#08203f;color:#cfd8e6;font-size:14px}
-  .topbar .wrap{display:flex;justify-content:space-between;gap:12px;padding:8px 20px;flex-wrap:wrap}
-  header.nav{position:sticky;top:0;z-index:50;background:var(--bg);border-bottom:1px solid var(--line)}
-  header.nav .wrap{display:flex;align-items:center;justify-content:space-between;height:68px}
-  .logo{display:flex;align-items:center;gap:10px;font-weight:800;font-size:19px;text-decoration:none;letter-spacing:-.2px}
-  .logo-mark{width:38px;height:38px;border-radius:9px;background:var(--brand);display:grid;place-items:center;color:var(--accent);font-weight:800;font-size:15px}
-  .logo small{display:block;font-weight:500;font-size:12px;color:var(--muted);letter-spacing:.3px}
   .wordmark{display:inline-flex;flex-direction:column;line-height:1;text-decoration:none;color:var(--ink)}
   .wordmark .script{font-family:"Kaushan Script",cursive;font-weight:400;font-size:26px;color:#c4161c;letter-spacing:.2px;margin-bottom:-2px}
   .wordmark .block{font-family:Inter,sans-serif;font-weight:800;font-size:15px;letter-spacing:3.2px;text-transform:uppercase}
@@ -65,29 +57,51 @@
   .shopphoto figure{margin:0;border-radius:16px;overflow:hidden;border:1px solid var(--line);background:var(--card)}
   .shopphoto img{width:100%;height:100%;max-height:380px;object-fit:cover;display:block}
   @media (max-width:860px){ .shopphoto{grid-template-columns:1fr} }
-  nav ul{display:flex;gap:26px;list-style:none;margin:0;padding:0}
-  nav a{text-decoration:none;font-weight:600;color:var(--muted)}
-  nav a:hover{color:var(--ink)}
-  .nav-cta{padding:10px 16px;font-size:15px}
-  @media (max-width:860px){ nav ul{display:none} }
-  .nav-cta{white-space:nowrap}
-  .logo-slot{display:block;width:68px;height:52px;flex:none}
-  .hero-spot{width:240px;margin-bottom:22px}
-  .fly-logo{display:none;position:fixed;top:0;left:0;z-index:60;transform-origin:0 0;will-change:transform;background:#fff;border-radius:14px;padding:14px;text-decoration:none}
-  .fly-logo img{display:block;width:100%;height:auto}
-  .js .fly-logo{display:block}
-  .js .hero-spot{visibility:hidden}
-  .js .logo-text{opacity:0;transform:translateX(-6px);transition:opacity .25s,transform .25s}
-  .js .logo-text.on{opacity:1;transform:none}
-  @media (max-width:520px){ .hero-spot{width:200px} }
+  /* ---------- header ---------- */
+  .site-header{--hh:124px;--bw:132px;position:fixed;top:0;left:0;right:0;z-index:50;background:transparent;transition:background-color .35s ease,box-shadow .35s ease,backdrop-filter .35s ease}
+  .site-header .wrap{display:flex;align-items:center;gap:24px;height:var(--hh);transition:height .4s cubic-bezier(.2,.8,.2,1)}
+  .brand{display:flex;align-items:center;gap:14px;text-decoration:none;color:#fff;flex:none}
+  .brand-badge{width:var(--bw);background:#fff;border-radius:14px;padding:8px;box-shadow:0 10px 30px rgba(0,0,0,.28);transition:width .4s cubic-bezier(.2,.8,.2,1),padding .4s,border-radius .4s,box-shadow .4s}
+  .brand-badge img{display:block;width:100%;height:auto}
+  .brand-text{font-weight:800;font-size:18px;letter-spacing:-.2px;line-height:1.2;transition:color .35s}
+  .brand-text small{display:block;font-weight:600;font-size:11.5px;letter-spacing:1.2px;text-transform:uppercase;opacity:.75;margin-top:3px}
+  .main-nav{margin-left:auto}
+  .main-nav ul{display:flex;gap:4px;list-style:none;margin:0;padding:0}
+  .main-nav a{display:block;padding:8px 12px;border-radius:999px;text-decoration:none;font-weight:600;font-size:15px;color:rgba(255,255,255,.86);transition:color .2s,background-color .2s}
+  .main-nav a:hover{background:rgba(255,255,255,.12);color:#fff}
+  .nav-cta{padding:11px 18px;font-size:15px;white-space:nowrap;flex:none}
+  .icon-btn{display:none;width:44px;height:44px;border-radius:12px;border:1px solid rgba(255,255,255,.3);background:transparent;color:#fff;align-items:center;justify-content:center;cursor:pointer;flex:none;text-decoration:none;transition:color .35s,border-color .35s,background-color .2s}
+  .icon-btn svg{width:20px;height:20px}
+  .site-header.compact{--hh:68px;--bw:62px;background:rgba(255,255,255,.86);-webkit-backdrop-filter:saturate(180%) blur(14px);backdrop-filter:saturate(180%) blur(14px);box-shadow:0 1px 0 rgba(15,23,35,.08),0 10px 30px rgba(15,23,35,.07)}
+  .site-header.compact .brand-badge{padding:3px;border-radius:10px;box-shadow:none}
+  .site-header.compact .brand{color:var(--ink)}
+  .site-header.compact .main-nav a{color:var(--muted)}
+  .site-header.compact .main-nav a:hover{background:var(--bg-alt);color:var(--ink)}
+  .site-header.compact .icon-btn{color:var(--ink);border-color:var(--line)}
+  @media (prefers-color-scheme: dark){ :root:not([data-theme="light"]) .site-header.compact{background:rgba(13,17,23,.82);box-shadow:0 1px 0 rgba(255,255,255,.06)} }
+  :root[data-theme="dark"] .site-header.compact{background:rgba(13,17,23,.82);box-shadow:0 1px 0 rgba(255,255,255,.06)}
+  .mobile-menu{position:fixed;left:0;right:0;top:0;z-index:49;background:var(--bg);padding:84px 20px 24px;box-shadow:0 20px 50px rgba(0,0,0,.25);transform:translateY(-102%);transition:transform .38s cubic-bezier(.2,.8,.2,1);visibility:hidden}
+  .mobile-menu.open{transform:none;visibility:visible}
+  .mobile-menu a.mm-link{display:block;padding:14px 4px;font-size:19px;font-weight:700;text-decoration:none;color:var(--ink);border-bottom:1px solid var(--line)}
+  .mobile-menu .mm-actions{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:18px}
+  .mobile-menu .mm-info{color:var(--muted);font-size:14px;margin:16px 0 0}
+  .menu-open .site-header{--hh:68px;--bw:62px;background:var(--bg)}
+  .menu-open .site-header .brand{color:var(--ink)} .menu-open .site-header .icon-btn{color:var(--ink);border-color:var(--line)}
+  .menu-open .site-header .brand-badge{padding:3px;box-shadow:none}
+  @media (max-width:1060px){ .main-nav{display:none} .icon-btn{display:inline-flex} .site-header .call-btn{margin-left:auto} }
+  @media (max-width:640px){ .site-header{--hh:96px;--bw:100px} .site-header.compact,.menu-open .site-header{--hh:62px;--bw:54px} .brand-text{display:none} .nav-cta{padding:10px 14px;font-size:14px} .site-header .wrap{gap:10px} }
+  @media (prefers-reduced-motion: reduce){ .site-header,.site-header *,.mobile-menu{transition:none !important} }
+  section[id],[id="book"]{scroll-margin-top:76px}
+  .hero-contact{display:flex;flex-wrap:wrap;gap:8px 18px;margin-top:22px;padding-top:20px;border-top:1px solid rgba(255,255,255,.14);color:#c4cfe0;font-size:14.5px}
+  .hero-contact a{color:#fff;text-decoration:none;font-weight:600}
+  .hero-contact a:hover{text-decoration:underline}
   .logo-badge{background:#fff;border-radius:14px;padding:12px;box-shadow:0 8px 24px rgba(0,0,0,.25)}
   .logo-badge img{display:block;width:100%;height:auto}
-  @media (max-width:520px){ .logo{font-size:16px;gap:8px} .logo small{display:none} .logo-slot{width:56px;height:43px} .nav-cta{padding:9px 14px;font-size:14px} .topbar{font-size:12.5px} }
 
   /* hero */
   .hero{background:linear-gradient(135deg,#08203f 0%,#0b2d5b 55%,#123e7a 100%);color:#fff;position:relative;overflow:hidden}
   .hero::after{content:"";position:absolute;right:-180px;top:-120px;width:560px;height:560px;border-radius:50%;background:radial-gradient(circle,rgba(245,184,0,.22),transparent 65%)}
-  .hero .wrap{display:grid;grid-template-columns:1.15fr .85fr;gap:48px;padding:80px 20px 90px;position:relative;z-index:1}
+  .hero .wrap{display:grid;grid-template-columns:1.15fr .85fr;gap:48px;padding:176px 20px 90px;position:relative;z-index:1}
   .eyebrow{display:inline-block;background:rgba(245,184,0,.15);color:var(--accent);border:1px solid rgba(245,184,0,.4);padding:6px 12px;border-radius:999px;font-weight:600;font-size:13px;letter-spacing:.4px;text-transform:uppercase}
   .hero h1{font-size:clamp(34px,5vw,56px);line-height:1.05;margin:18px 0 18px;letter-spacing:-1.2px}
   .hero h1 span{color:var(--accent)}
@@ -117,7 +131,8 @@
   .vin-msg.ok{color:#17703d}.vin-msg.err{color:#a12121}
   @media (max-width:520px){ .vehicle{grid-template-columns:1fr 1fr} .vehicle .field:first-child{grid-column:1/-1} }
   .fine{font-size:12px;color:#7a8494;text-align:center;margin-top:10px}
-  @media (max-width:900px){ .hero .wrap{grid-template-columns:1fr;padding:56px 20px 64px} }
+  @media (max-width:900px){ .hero .wrap{grid-template-columns:1fr;padding:150px 20px 64px} }
+  @media (max-width:640px){ .hero .wrap{padding-top:124px} }
 
   /* trust strip */
   .strip{background:var(--bg-alt);border-bottom:1px solid var(--line)}
@@ -229,30 +244,42 @@
 </head>
 <body>
 
-<div class="topbar"><div class="wrap">
-  <div>📍 <a href="https://www.google.com/maps/search/?api=1&query=European+Auto+Center+3129+Alta+Mere+Dr+Fort+Worth+TX+76116" target="_blank" rel="noopener">3129 Alta Mere Dr, Fort Worth, TX 76116</a> · Mon–Fri 8am–6pm · Sat 9:30am–5pm</div>
-  <div>☎ Call <a href="tel:+18177377300">817-737-7300</a> &nbsp;·&nbsp; Text <a href="sms:+18177138060">817-713-8060</a></div>
-</div></div>
-
-<header class="nav"><div class="wrap">
-  <a class="logo" href="#top" aria-label="European Auto Center home"><span class="logo-slot" id="logoSlot"></span><div class="logo-text" id="logoText">European Auto Center<small>SINCE 1975 · FORT WORTH, TX</small></div></a>
-  <nav><ul>
+<header class="site-header" id="siteHeader"><div class="wrap">
+  <a class="brand" href="#top" aria-label="European Auto Center, back to top">
+    <span class="brand-badge"><img src="images/logo.svg" alt="European Auto Center logo" width="116" height="88"></span>
+    <span class="brand-text">European Auto Center<small>Since 1975 · Fort Worth</small></span>
+  </a>
+  <nav class="main-nav" aria-label="Main"><ul>
     <li><a href="#how">How it works</a></li>
     <li><a href="#pricing">Pricing</a></li>
     <li><a href="#checks">What we check</a></li>
-    <li><a href="#report">Your report</a></li>
     <li><a href="#reviews">Reviews</a></li>
-    <li><a href="#faq">FAQ</a></li>
     <li><a href="#visit">Location</a></li>
   </ul></nav>
+  <a class="icon-btn call-btn" href="tel:+18177377300" aria-label="Call 817-737-7300"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3.1 19.5 19.5 0 0 1-6-6A19.8 19.8 0 0 1 2.1 4.2 2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7c.1.9.4 1.8.7 2.7a2 2 0 0 1-.5 2.1L8 9.8a16 16 0 0 0 6 6l1.3-1.3a2 2 0 0 1 2.1-.4c.9.3 1.8.6 2.7.7a2 2 0 0 1 1.7 2z"/></svg></a>
   <a class="btn btn-accent nav-cta" href="#book">Book now</a>
+  <button class="icon-btn" id="menuBtn" type="button" aria-label="Open menu" aria-expanded="false" aria-controls="mobileMenu"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path class="l1" d="M4 7h16"/><path class="l2" d="M4 12h16"/><path class="l3" d="M4 17h16"/></svg></button>
 </div></header>
+
+<div class="mobile-menu" id="mobileMenu" aria-label="Menu">
+  <a class="mm-link" href="#how">How it works</a>
+  <a class="mm-link" href="#pricing">Pricing</a>
+  <a class="mm-link" href="#checks">What we check</a>
+  <a class="mm-link" href="#report">Your report</a>
+  <a class="mm-link" href="#reviews">Reviews</a>
+  <a class="mm-link" href="#faq">FAQ</a>
+  <a class="mm-link" href="#visit">Location &amp; hours</a>
+  <div class="mm-actions">
+    <a class="btn btn-dark" href="tel:+18177377300">Call</a>
+    <a class="btn btn-accent" href="#book">Book now</a>
+  </div>
+  <p class="mm-info">3129 Alta Mere Dr, Fort Worth · Mon–Fri 8am–6pm · Sat 9:30am–5pm</p>
+</div>
 
 <main id="top">
 <section class="hero" style="padding:0">
   <div class="wrap">
     <div>
-      <div class="logo-badge hero-spot" id="heroSpot"><img src="images/logo.svg" alt="European Auto Center" width="212" height="162"></div>
       <span class="eyebrow">European vehicle specialists</span>
       <h1>Know exactly what's wrong <span>before you pay</span> for repairs.</h1>
       <p class="lead">Dealer-level diagnostics for Mercedes-Benz, BMW, Porsche, Audi, Jaguar, Range Rover and Rolls-Royce, at 30–40% less than the dealership. Bring it to our Fort Worth shop, or we'll come to your home, office, or the seller's driveway.</p>
@@ -264,6 +291,11 @@
         <div>Factory-level scan tools</div>
         <div>Written report with photos</div>
         <div>Pre-purchase inspections</div>
+      </div>
+      <div class="hero-contact">
+        <span>📍 <a href="https://www.google.com/maps/search/?api=1&query=European+Auto+Center+3129+Alta+Mere+Dr+Fort+Worth+TX+76116" target="_blank" rel="noopener">3129 Alta Mere Dr, Fort Worth</a></span>
+        <span>☎ <a href="tel:+18177377300">817-737-7300</a></span>
+        <span>🕗 Mon–Fri 8–6 · Sat 9:30–5</span>
       </div>
     </div>
 
@@ -489,8 +521,6 @@
   <div class="copy"><span>© 2026 European Auto Center</span><span>Sample design — draft for review</span></div>
 </div></footer>
 
-<a href="#top" class="fly-logo" id="flyLogo" aria-hidden="true" tabindex="-1"><img src="images/logo.svg" alt=""></a>
-
 <div class="modal" id="sendModal" hidden role="dialog" aria-modal="true" aria-labelledby="sendTitle">
   <div class="modal-card">
     <button class="modal-x" type="button" aria-label="Close" onclick="closeSend()">×</button>
@@ -678,30 +708,26 @@
     };
   })();
 
-  // ---------- Logo: big in the hero, glides into the header on scroll ----------
+  // ---------- Header: tall & transparent at the top, compact glass bar after scrolling ----------
   (function(){
-    var fly=document.getElementById('flyLogo'),spot=document.getElementById('heroSpot'),slot=document.getElementById('logoSlot'),txt=document.getElementById('logoText');
-    var spotDocTop=0,ticking=false;
-    function measure(){spotDocTop=spot.getBoundingClientRect().top+window.scrollY;}
-    function ease(x){return x<0?0:x>1?1:x*x*(3-2*x);}
-    function frame(){
-      ticking=false;
-      var a=spot.getBoundingClientRect(),b=slot.getBoundingClientRect();
-      var D=Math.max(200,spotDocTop+a.height*0.5);
-      var p=ease(window.scrollY/D);
-      var x=a.left+(b.left-a.left)*p, y=a.top+(b.top-a.top)*p, w=a.width+(b.width-a.width)*p;
-      fly.style.width=a.width+'px';
-      fly.style.transform='translate('+x+'px,'+y+'px) scale('+(w/a.width)+')';
-      fly.style.boxShadow='0 '+(8*(1-p))+'px '+(24*(1-p))+'px rgba(0,0,0,'+(0.25*(1-p))+')';
-      fly.style.borderRadius=(14+20*p)+'px';
-      fly.setAttribute('aria-hidden',p<1?'true':'false');
-      txt.classList.toggle('on',p>0.85);
+    var h=document.getElementById('siteHeader'),btn=document.getElementById('menuBtn'),menu=document.getElementById('mobileMenu');
+    var compact=false,ticking=false;
+    function update(){
+      ticking=false;var y=window.scrollY;
+      if(!compact&&y>56){compact=true;h.classList.add('compact');}
+      else if(compact&&y<12){compact=false;h.classList.remove('compact');}
     }
-    function req(){if(!ticking){ticking=true;requestAnimationFrame(frame);}}
-    measure();frame();
-    window.addEventListener('scroll',req,{passive:true});
-    window.addEventListener('resize',function(){measure();req();});
-    window.addEventListener('load',function(){measure();req();});
+    window.addEventListener('scroll',function(){if(!ticking){ticking=true;requestAnimationFrame(update);}},{passive:true});
+    update();
+    function setMenu(open){
+      document.documentElement.classList.toggle('menu-open',open);
+      menu.classList.toggle('open',open);
+      btn.setAttribute('aria-expanded',open);btn.setAttribute('aria-label',open?'Close menu':'Open menu');
+    }
+    btn.addEventListener('click',function(){setMenu(!menu.classList.contains('open'));});
+    menu.querySelectorAll('a').forEach(function(a){a.addEventListener('click',function(){setMenu(false);});});
+    document.addEventListener('keydown',function(e){if(e.key==='Escape')setMenu(false);});
+    window.addEventListener('resize',function(){if(window.innerWidth>1060)setMenu(false);});
   })();
 </script>
 </body>
