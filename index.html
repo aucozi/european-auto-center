@@ -484,8 +484,9 @@
         <option>Other</option>
       </select></div>
       <div class="field"><textarea id="fnotes" rows="3" placeholder="Describe the problem (optional): warning lights, noises, when it happens…"></textarea></div>
-      <button class="btn btn-accent btn-block" type="submit">Send request by text →</button>
-      <div class="fine">Your request goes by text message straight to our team. Prefer to talk? Call <a href="tel:+18177377300">817-737-7300</a> or text <a href="sms:+18177138060">817-713-8060</a></div>
+      <input type="text" name="_honey" id="fhoney" tabindex="-1" autocomplete="off" aria-hidden="true" style="position:absolute;left:-9999px;width:1px;height:1px;opacity:0">
+      <button class="btn btn-accent btn-block" type="submit" id="bookSubmit">Request appointment →</button>
+      <div class="fine">Your request goes straight to our team. Prefer to talk? Call <a href="tel:+18177377300">817-737-7300</a> or text <a href="sms:+18177138060">817-713-8060</a></div>
     </form>
   </div>
 </section>
@@ -529,12 +530,15 @@
     <pre class="msg-preview" id="msgPreview"></pre>
     <a class="btn btn-accent btn-block" id="smsBtn" href="#">💬 Open text message</a>
     <button class="btn btn-block btn-outline" type="button" id="copyBtn">Copy details</button>
+    <button class="btn btn-block btn-dark" type="button" id="doneBtn" onclick="closeSend()" hidden>Done</button>
     <p class="fine" id="sendAlt">Prefer to talk? Call <a href="tel:+18177377300">817-737-7300</a>.</p>
   </div>
 </div>
 
 <script>
   var SHOP_SMS='+16825536089';
+  // Booking requests are emailed here (via FormSubmit). Change this one line to send them elsewhere.
+  var SHOP_EMAIL='ziad@theautoplace.com';
   function val(id){var e=document.getElementById(id);return e?e.value.trim():'';}
   function go(e){
     e.preventDefault();
@@ -560,19 +564,52 @@
     ].filter(Boolean);
     var msg=lines.join('\n');
     var isPhone=/Android|iPhone|iPad|iPod/i.test(navigator.userAgent)||(navigator.maxTouchPoints>1&&/Macintosh/.test(navigator.userAgent));
-    document.getElementById('msgPreview').textContent=msg;
-    document.getElementById('smsBtn').href='sms:'+SHOP_SMS+'?&body='+encodeURIComponent(msg);
-    document.getElementById('smsBtn').hidden=!isPhone;
-    document.getElementById('sendSub').innerHTML=isPhone?'Tap the button to open your messages with everything filled in, then press <b>Send</b>.':'Copy your request and text it to <b>682-553-6089</b> from your phone, or call us at <b>817-737-7300</b>.';
-    document.getElementById('sendAlt').hidden=!isPhone;
-    var cb=document.getElementById('copyBtn');cb.textContent='Copy details';
+    var $=function(id){return document.getElementById(id);};
+    var modal=$('sendModal'),title=$('sendTitle'),sub=$('sendSub'),pre=$('msgPreview'),sms=$('smsBtn'),cb=$('copyBtn'),alt=$('sendAlt'),done=$('doneBtn'),btn=$('bookSubmit');
+    pre.textContent=msg;
+    sms.href='sms:'+SHOP_SMS+'?&body='+encodeURIComponent(msg);
+    cb.textContent='Copy details';
     cb.onclick=function(){
-      var done=function(){cb.textContent='✓ Copied';};
-      if(navigator.clipboard&&navigator.clipboard.writeText)navigator.clipboard.writeText(msg).then(done,function(){fallbackCopy(msg);done();});else{fallbackCopy(msg);done();}
+      var ok=function(){cb.textContent='✓ Copied';};
+      if(navigator.clipboard&&navigator.clipboard.writeText)navigator.clipboard.writeText(msg).then(ok,function(){fallbackCopy(msg);ok();});else{fallbackCopy(msg);ok();}
     };
-    document.getElementById('sendModal').hidden=false;
+    function show(state){
+      modal.hidden=false;
+      pre.hidden=state==='sending';done.hidden=state!=='sent';
+      if(state==='sending'){title.textContent='Sending your request…';sub.textContent='One moment.';sms.hidden=cb.hidden=alt.hidden=true;}
+      else if(state==='sent'){
+        title.textContent='✓ Request sent';
+        sub.innerHTML='Thanks, '+escapeHtml(val('fname').split(' ')[0]||'there')+'! Our team has your request and will call or text you at <b>'+escapeHtml(val('fphone'))+'</b> to confirm your appointment.';
+        sms.hidden=cb.hidden=true;alt.hidden=false;
+      } else {
+        title.textContent="Let's send it by text instead";
+        sub.innerHTML=isPhone?"We couldn't send your request online. Tap below to text it to us with everything filled in, then press <b>Send</b>.":"We couldn't send your request online. Copy it and text it to <b>682-553-6089</b>, or call us at <b>817-737-7300</b>.";
+        sms.hidden=!isPhone;cb.hidden=false;alt.hidden=!isPhone;
+      }
+    }
+    // Bots fill hidden fields; quietly pretend success.
+    if(val('fhoney')){show('sent');return false;}
+    var payload={
+      _subject:'New diagnostic request: '+[yr,mk,model].filter(Boolean).join(' ')+' ('+(mobile?'Mobile $300':'In-shop $160')+')',
+      _template:'table',_captcha:'false',
+      Service:mobile?'Mobile diagnostic ($300)':'In-shop diagnostic ($160)',
+      Name:val('fname'),Phone:val('fphone'),Email:val('femail')||'-',
+      Vehicle:[yr,mk,model].filter(Boolean).join(' '),VIN:val('vin')||'-',
+      'Preferred date':dateTxt||'-',Location:mobile?(val('addr')||'-'):'At the shop',
+      Reason:val('freason'),Details:val('fnotes')||'-'
+    };
+    if(val('femail'))payload._replyto=val('femail');
+    show('sending');btn.disabled=true;
+    var ctl=('AbortController' in window)?new AbortController():null,timer=setTimeout(function(){ctl&&ctl.abort();},15000);
+    fetch('https://formsubmit.co/ajax/'+SHOP_EMAIL,{method:'POST',headers:{'Content-Type':'application/json','Accept':'application/json'},body:JSON.stringify(payload),signal:ctl?ctl.signal:undefined})
+      .then(function(r){return r.json().then(function(j){return {ok:r.ok,j:j};});})
+      .then(function(res){clearTimeout(timer);btn.disabled=false;
+        if(res.ok&&String(res.j.success)==='true'){show('sent');}else{show('fallback');}
+      })
+      .catch(function(){clearTimeout(timer);btn.disabled=false;show('fallback');});
     return false;
   }
+  function escapeHtml(s){return String(s).replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];});}
   function fallbackCopy(s){var ta=document.createElement('textarea');ta.value=s;document.body.appendChild(ta);ta.select();try{document.execCommand('copy')}catch(e){}ta.remove();}
   function closeSend(){document.getElementById('sendModal').hidden=true;}
   document.addEventListener('keydown',function(e){if(e.key==='Escape')closeSend();});
