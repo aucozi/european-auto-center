@@ -25,6 +25,7 @@
     --brand:#0a2448; --brand-2:#1a4b8f; --card:#161e2a; --shadow:0 10px 30px rgba(0,0,0,.35);
   }
   *{box-sizing:border-box}
+  [hidden]{display:none !important}
   html{scroll-behavior:smooth}
   body{margin:0;font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,sans-serif;background:var(--bg);color:var(--ink);line-height:1.55}
   a{color:inherit}
@@ -96,7 +97,7 @@
   .seg .p{font-weight:800;font-size:26px;color:#0b2d5b}
   .seg .s{font-size:12.5px;color:#5b6575}
   .field{margin-bottom:12px}
-  .field input,.field select{width:100%;padding:13px 14px;border:1px solid #d6dce6;border-radius:10px;font:inherit;font-size:15px;background:#fff;color:#0f1723}
+  .field input,.field select,.field textarea{width:100%;padding:13px 14px;border:1px solid #d6dce6;border-radius:10px;font:inherit;font-size:15px;background:#fff;color:#0f1723}
   .row2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
   .vehicle{display:grid;grid-template-columns:.8fr 1.1fr 1.1fr;gap:10px}
   .vehicle .field{margin-bottom:12px}
@@ -204,6 +205,15 @@
   @media (max-width:760px){ footer .cols{grid-template-columns:1fr} }
 
   .ph{background:rgba(245,184,0,.18);border-bottom:1px dashed var(--accent);padding:0 3px;border-radius:3px}
+  .field textarea{resize:vertical;min-height:84px;line-height:1.45}
+  .btn-outline{background:transparent;border-color:#d6dce6;color:#0f1723;margin-top:10px}
+  .modal{position:fixed;inset:0;background:rgba(6,14,28,.6);display:flex;align-items:center;justify-content:center;padding:16px;z-index:200}
+  .modal[hidden]{display:none}
+  .modal-card{background:#fff;color:#0f1723;border-radius:18px;max-width:460px;width:100%;padding:26px;position:relative;box-shadow:0 30px 80px rgba(0,0,0,.4);max-height:calc(100vh - 32px);overflow:auto}
+  .modal-card h3{margin:0 0 6px;font-size:21px;padding-right:30px}
+  .modal-sub{margin:0 0 14px;color:#5b6575;font-size:14.5px}
+  .modal-x{position:absolute;top:12px;right:14px;border:0;background:none;font-size:28px;line-height:1;cursor:pointer;color:#5b6575}
+  .msg-preview{background:#f4f6f9;border:1px solid #e3e7ee;border-radius:12px;padding:14px;font:13.5px/1.5 ui-monospace,Menlo,monospace;white-space:pre-wrap;word-break:break-word;margin:0 0 16px;max-height:240px;overflow:auto}
   .toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%) translateY(120px);background:#0f1723;color:#fff;padding:14px 20px;border-radius:12px;box-shadow:0 10px 30px rgba(0,0,0,.3);transition:transform .3s,opacity .3s;opacity:0;pointer-events:none;z-index:100;max-width:calc(100% - 32px)}
   .toast.show{transform:translateX(-50%) translateY(0);opacity:1}
 </style>
@@ -411,11 +421,11 @@
         <label for="b-mobile"><div class="t">Mobile</div><div class="p">$300</div><div class="s">We come to you</div></label>
       </div>
       <div class="row2">
-        <div class="field"><input placeholder="Full name" required></div>
-        <div class="field"><input type="tel" placeholder="Phone" required></div>
+        <div class="field"><input id="fname" placeholder="Full name" autocomplete="name" required></div>
+        <div class="field"><input id="fphone" type="tel" placeholder="Phone" autocomplete="tel" required></div>
       </div>
       <div class="row2">
-        <div class="field"><input type="email" placeholder="Email"></div>
+        <div class="field"><input id="femail" type="email" placeholder="Email (optional)" autocomplete="email"></div>
         <div class="field"><input type="date" id="pdate" aria-label="Preferred date" title="Preferred date (closed Sundays)"></div>
       </div>
       <div class="field vin-row">
@@ -424,7 +434,7 @@
       </div>
       <div class="vehicle" data-vehicle data-vin="vin"></div>
       <div class="field" id="addr-row" hidden><input id="addr" placeholder="Where should we meet you? (street address, city)" autocomplete="street-address"></div>
-      <div class="field"><select aria-label="Reason">
+      <div class="field"><select id="freason" aria-label="Reason">
         <option>Check engine / warning light</option>
         <option>Pre-purchase inspection</option>
         <option>Won't start</option>
@@ -432,8 +442,9 @@
         <option>Electrical problem</option>
         <option>Other</option>
       </select></div>
-      <button class="btn btn-accent btn-block" type="submit">Request appointment →</button>
-      <div class="fine">Prefer to talk? Call <a href="tel:+18177377300">817-737-7300</a> or text <a href="sms:+18177138060">817-713-8060</a></div>
+      <div class="field"><textarea id="fnotes" rows="3" placeholder="Describe the problem (optional): warning lights, noises, when it happens…"></textarea></div>
+      <button class="btn btn-accent btn-block" type="submit">Send request by text →</button>
+      <div class="fine">Your request goes by text message straight to our team. Prefer to talk? Call <a href="tel:+18177377300">817-737-7300</a> or text <a href="sms:+18177138060">817-713-8060</a></div>
     </form>
   </div>
 </section>
@@ -469,16 +480,62 @@
   <div class="copy"><span>© 2026 European Auto Center</span><span>Sample design — draft for review</span></div>
 </div></footer>
 
-<div class="toast" id="toast">Thanks! This is a demo — in the live site this request goes straight to the shop.</div>
+<div class="modal" id="sendModal" hidden role="dialog" aria-modal="true" aria-labelledby="sendTitle">
+  <div class="modal-card">
+    <button class="modal-x" type="button" aria-label="Close" onclick="closeSend()">×</button>
+    <h3 id="sendTitle">Almost done: send your request</h3>
+    <p class="modal-sub" id="sendSub">Tap the button to open your messages with everything filled in, then press <b>Send</b>.</p>
+    <pre class="msg-preview" id="msgPreview"></pre>
+    <a class="btn btn-accent btn-block" id="smsBtn" href="#">💬 Open text message</a>
+    <button class="btn btn-block btn-outline" type="button" id="copyBtn">Copy details</button>
+    <p class="fine" id="sendAlt">Prefer to talk? Call <a href="tel:+18177377300">817-737-7300</a>.</p>
+  </div>
+</div>
 
 <script>
+  var SHOP_SMS='+16825536089';
+  function val(id){var e=document.getElementById(id);return e?e.value.trim():'';}
   function go(e){
     e.preventDefault();
-    var t=document.getElementById('toast');
-    t.classList.add('show');
-    setTimeout(function(){t.classList.remove('show')},3500);
+    var f=e.target;
+    var mobile=document.getElementById('b-mobile').checked;
+    var vs=f.querySelectorAll('[data-vehicle] select'),other=f.querySelector('[data-vehicle] input');
+    var model=vs[2].value==='__other'||vs[1].value==='__other'?other.value.trim():vs[2].value;
+    var mk=vs[1].value==='__other'?'':vs[1].value, yr=vs[0].value==='older'?'Pre-1950':vs[0].value;
+    var d=val('pdate'),dateTxt='';
+    if(d){var dt=new Date(d+'T12:00');dateTxt=dt.toLocaleDateString('en-US',{weekday:'short',month:'short',day:'numeric'});}
+    var lines=[
+      'NEW DIAGNOSTIC REQUEST (website)',
+      'Service: '+(mobile?'Mobile diagnostic - $300':'In-shop diagnostic - $160'),
+      'Name: '+val('fname'),
+      'Phone: '+val('fphone'),
+      val('femail')&&('Email: '+val('femail')),
+      'Vehicle: '+[yr,mk,model].filter(Boolean).join(' '),
+      val('vin')&&('VIN: '+val('vin')),
+      dateTxt&&('Preferred date: '+dateTxt),
+      mobile&&val('addr')&&('Location: '+val('addr')),
+      'Reason: '+val('freason'),
+      val('fnotes')&&('Details: '+val('fnotes'))
+    ].filter(Boolean);
+    var msg=lines.join('\n');
+    var isPhone=/Android|iPhone|iPad|iPod/i.test(navigator.userAgent)||(navigator.maxTouchPoints>1&&/Macintosh/.test(navigator.userAgent));
+    document.getElementById('msgPreview').textContent=msg;
+    document.getElementById('smsBtn').href='sms:'+SHOP_SMS+'?&body='+encodeURIComponent(msg);
+    document.getElementById('smsBtn').hidden=!isPhone;
+    document.getElementById('sendSub').innerHTML=isPhone?'Tap the button to open your messages with everything filled in, then press <b>Send</b>.':'Copy your request and text it to <b>682-553-6089</b> from your phone, or call us at <b>817-737-7300</b>.';
+    document.getElementById('sendAlt').hidden=!isPhone;
+    var cb=document.getElementById('copyBtn');cb.textContent='Copy details';
+    cb.onclick=function(){
+      var done=function(){cb.textContent='✓ Copied';};
+      if(navigator.clipboard&&navigator.clipboard.writeText)navigator.clipboard.writeText(msg).then(done,function(){fallbackCopy(msg);done();});else{fallbackCopy(msg);done();}
+    };
+    document.getElementById('sendModal').hidden=false;
     return false;
   }
+  function fallbackCopy(s){var ta=document.createElement('textarea');ta.value=s;document.body.appendChild(ta);ta.select();try{document.execCommand('copy')}catch(e){}ta.remove();}
+  function closeSend(){document.getElementById('sendModal').hidden=true;}
+  document.addEventListener('keydown',function(e){if(e.key==='Escape')closeSend();});
+  document.getElementById('sendModal').addEventListener('click',function(e){if(e.target===this)closeSend();});
 
   // ---------- Smart vehicle picker (Year → Make → Model, optional VIN) ----------
   var API='https://vpic.nhtsa.dot.gov/api/vehicles/';
