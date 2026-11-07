@@ -4,4 +4,4 @@ Single-page site offering in-shop ($160) and mobile ($300) vehicle diagnostics.
 
 Hosted with GitHub Pages: Settings → Pages → Branch `main`, folder `/ (root)`.
 
-Remaining placeholders (highlighted yellow): shop hours, and whether the diagnostic fee is credited toward repairs.
+Remaining placeholder (highlighted yellow): whether the diagnostic fee is credited toward repairs. Hours and rating come from public listings (Yelp, Birdeye); confirm with the owner.
