@@ -98,6 +98,14 @@
   .field{margin-bottom:12px}
   .field input,.field select{width:100%;padding:13px 14px;border:1px solid #d6dce6;border-radius:10px;font:inherit;font-size:15px;background:#fff;color:#0f1723}
   .row2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+  .vehicle{display:grid;grid-template-columns:.8fr 1.1fr 1.1fr;gap:10px}
+  .vehicle .field{margin-bottom:12px}
+  .vehicle .model-other{grid-column:1/-1;margin-top:-2px}
+  .field select{appearance:none;-webkit-appearance:none;background-image:linear-gradient(45deg,transparent 50%,#5b6575 50%),linear-gradient(135deg,#5b6575 50%,transparent 50%);background-position:calc(100% - 18px) 55%,calc(100% - 13px) 55%;background-size:5px 5px;background-repeat:no-repeat;padding-right:32px}
+  .field select:disabled{background-color:#f3f5f8;color:#8a93a3}
+  .vin-msg{font-size:13px;margin-top:6px;min-height:0;color:#5b6575}
+  .vin-msg.ok{color:#17703d}.vin-msg.err{color:#a12121}
+  @media (max-width:520px){ .vehicle{grid-template-columns:1fr 1fr} .vehicle .field:first-child{grid-column:1/-1} }
   .fine{font-size:12px;color:#7a8494;text-align:center;margin-top:10px}
   @media (max-width:900px){ .hero .wrap{grid-template-columns:1fr;padding:56px 20px 64px} }
 
@@ -249,12 +257,9 @@
         <input type="radio" name="svc" id="q-mobile" value="mobile">
         <label for="q-mobile"><div class="t">Mobile</div><div class="p">$300</div><div class="s">We come to you</div></label>
       </div>
-      <div class="row2">
-        <div class="field"><input placeholder="Year / Make" required></div>
-        <div class="field"><input placeholder="Model" required></div>
-      </div>
+      <div class="vehicle" data-vehicle></div>
       <div class="field"><input type="tel" placeholder="Phone number" required></div>
-      <button class="btn btn-accent btn-block" type="submit">Request appointment →</button>
+      <button class="btn btn-accent btn-block" type="submit">Continue →</button>
       <div class="fine">No payment until the diagnostic is complete.</div>
     </form>
   </div>
@@ -411,12 +416,14 @@
       </div>
       <div class="row2">
         <div class="field"><input type="email" placeholder="Email"></div>
-        <div class="field"><input type="date" aria-label="Preferred date"></div>
+        <div class="field"><input type="date" id="pdate" aria-label="Preferred date" title="Preferred date (closed Sundays)"></div>
       </div>
-      <div class="row2">
-        <div class="field"><input placeholder="Year / Make / Model" required></div>
-        <div class="field"><input placeholder="Address (mobile only)"></div>
+      <div class="field vin-row">
+        <input id="vin" placeholder="VIN (optional): fills in your vehicle automatically" maxlength="17" autocomplete="off" spellcheck="false" style="text-transform:uppercase">
+        <div class="vin-msg" id="vin-msg" aria-live="polite"></div>
       </div>
+      <div class="vehicle" data-vehicle data-vin="vin"></div>
+      <div class="field" id="addr-row" hidden><input id="addr" placeholder="Where should we meet you? (street address, city)" autocomplete="street-address"></div>
       <div class="field"><select aria-label="Reason">
         <option>Check engine / warning light</option>
         <option>Pre-purchase inspection</option>
@@ -465,9 +472,6 @@
 <div class="toast" id="toast">Thanks! This is a demo — in the live site this request goes straight to the shop.</div>
 
 <script>
-  function pick(v){
-    try{ document.getElementById(v==='shop'?'b-shop':'b-mobile').checked=true; }catch(e){}
-  }
   function go(e){
     e.preventDefault();
     var t=document.getElementById('toast');
@@ -475,6 +479,136 @@
     setTimeout(function(){t.classList.remove('show')},3500);
     return false;
   }
+
+  // ---------- Smart vehicle picker (Year → Make → Model, optional VIN) ----------
+  var API='https://vpic.nhtsa.dot.gov/api/vehicles/';
+  var EURO=['Alfa Romeo','Aston Martin','Audi','Bentley','BMW','Ferrari','Fiat','Jaguar','Lamborghini','Land Rover','Lotus','Maserati','McLaren','Mercedes-Benz','MINI','Porsche','Rolls-Royce','Saab','smart','Volkswagen','Volvo'];
+  var OTHER=['Acura','Buick','Cadillac','Chevrolet','Chrysler','Dodge','Ford','Genesis','GMC','Honda','Hyundai','Infiniti','Jeep','Kia','Lexus','Lincoln','Mazda','Mitsubishi','Nissan','Ram','Subaru','Tesla','Toyota'];
+  var FALLBACK={
+    'Mercedes-Benz':['A-Class','AMG GT','C-Class','CLA','CLS','E-Class','EQE','EQS','G-Class','GLA','GLB','GLC','GLE','GLS','S-Class','SL','SLK / SLC','Sprinter'],
+    'BMW':['2 Series','3 Series','4 Series','5 Series','7 Series','8 Series','i4','iX','M3','M4','M5','X1','X3','X5','X6','X7','Z4'],
+    'Audi':['A3','A4','A5','A6','A7','A8','e-tron','Q3','Q5','Q7','Q8','R8','RS','S4','TT'],
+    'Porsche':['718 Boxster','718 Cayman','911','Cayenne','Macan','Panamera','Taycan'],
+    'Volkswagen':['Atlas','Golf','GTI','ID.4','Jetta','Passat','Tiguan','Touareg'],
+    'Land Rover':['Defender','Discovery','Discovery Sport','Range Rover','Range Rover Evoque','Range Rover Sport','Range Rover Velar'],
+    'Jaguar':['E-Pace','F-Pace','F-Type','I-Pace','XE','XF','XJ'],
+    'Volvo':['S60','S90','V60','V90','XC40','XC60','XC90'],
+    'MINI':['Clubman','Cooper','Countryman'],
+    'Rolls-Royce':['Cullinan','Dawn','Ghost','Phantom','Wraith']
+  };
+  var modelCache={};
+  function el(tag,attrs,html){var e=document.createElement(tag);for(var k in attrs)e.setAttribute(k,attrs[k]);if(html!=null)e.innerHTML=html;return e;}
+  function opt(v,label){var o=document.createElement('option');o.value=v;o.textContent=label||v;return o;}
+  function getModels(year,make){
+    var key=year+'|'+make;
+    if(modelCache[key])return Promise.resolve(modelCache[key]);
+    var url=API+'GetModelsForMakeYear/make/'+encodeURIComponent(make)+(year&&year!=='older'?'/modelyear/'+year:'')+'?format=json';
+    var ctl=('AbortController' in window)?new AbortController():null;
+    var timer=setTimeout(function(){ctl&&ctl.abort()},6000);
+    return fetch(url,ctl?{signal:ctl.signal}:{}).then(function(r){return r.json()}).then(function(d){
+      clearTimeout(timer);
+      var seen={},list=[];
+      (d.Results||[]).forEach(function(r){var n=(r.Model_Name||'').trim();if(n&&!seen[n.toLowerCase()]){seen[n.toLowerCase()]=1;list.push(n);}});
+      list.sort(function(a,b){return a.localeCompare(b,undefined,{numeric:true})});
+      if(!list.length&&FALLBACK[make])list=FALLBACK[make].slice();
+      modelCache[key]=list;return list;
+    }).catch(function(){clearTimeout(timer);return FALLBACK[make]?FALLBACK[make].slice():[];});
+  }
+  function buildPicker(host){
+    var fYear=el('div',{'class':'field'}),fMake=el('div',{'class':'field'}),fModel=el('div',{'class':'field'});
+    var year=el('select',{'aria-label':'Year',required:''}),make=el('select',{'aria-label':'Make',required:''}),model=el('select',{'aria-label':'Model',required:''});
+    var other=el('input',{'class':'model-other',placeholder:'Type your model','aria-label':'Model (other)'});
+    var fOther=el('div',{'class':'field model-other'});fOther.appendChild(other);fOther.hidden=true;
+    year.appendChild(opt('','Year'));
+    var now=new Date().getFullYear()+1;for(var y=now;y>=1950;y--)year.appendChild(opt(String(y)));
+    year.appendChild(opt('older','Before 1950'));
+    make.appendChild(opt('','Make'));
+    var g1=el('optgroup',{label:'European'}),g2=el('optgroup',{label:'Other makes'});
+    EURO.forEach(function(m){g1.appendChild(opt(m))});OTHER.forEach(function(m){g2.appendChild(opt(m))});
+    make.appendChild(g1);make.appendChild(g2);make.appendChild(opt('__other','Other make…'));
+    function resetModel(text){model.innerHTML='';model.appendChild(opt('',text||'Model'));model.disabled=true;fOther.hidden=true;other.required=false;}
+    resetModel('Model');
+    var req=0;
+    function load(selectModel){
+      var y=year.value,m=make.value;
+      if(m==='__other'){resetModel('Model');model.disabled=true;fOther.hidden=false;other.required=true;other.placeholder='Type your make and model';return Promise.resolve();}
+      if(!y||!m){resetModel(!m?'Model':'Model');return Promise.resolve();}
+      var my=++req;resetModel('Loading models…');
+      return getModels(y,m).then(function(list){
+        if(my!==req)return;
+        model.innerHTML='';model.appendChild(opt('','Model'));
+        list.forEach(function(n){model.appendChild(opt(n))});
+        model.appendChild(opt('__other','Other / not listed…'));
+        model.disabled=false;
+        if(selectModel){
+          var hit=list.filter(function(n){return n.toLowerCase()===selectModel.toLowerCase()})[0];
+          if(hit)model.value=hit;else{model.value='__other';fOther.hidden=false;other.required=true;other.value=selectModel;}
+        }
+      });
+    }
+    year.addEventListener('change',function(){load()});
+    make.addEventListener('change',function(){load()});
+    model.addEventListener('change',function(){var o=model.value==='__other';fOther.hidden=!o;other.required=o;other.placeholder='Type your model';if(o)other.focus();});
+    fYear.appendChild(year);fMake.appendChild(make);fModel.appendChild(model);
+    host.appendChild(fYear);host.appendChild(fMake);host.appendChild(fModel);host.appendChild(fOther);
+    return {set:function(y,m,mod){
+      if(y){if(![].some.call(year.options,function(o){return o.value===String(y)}))year.appendChild(opt(String(y)));year.value=String(y);}
+      var all=EURO.concat(OTHER),hit=all.filter(function(x){return x.toLowerCase()===String(m||'').toLowerCase()})[0];
+      if(!hit&&m){hit=m.toLowerCase().replace(/\b\w/g,function(c){return c.toUpperCase()});make.insertBefore(opt(hit),make.lastChild);}
+      if(hit)make.value=hit;
+      return load(mod);
+    }};
+  }
+  document.querySelectorAll('[data-vehicle]').forEach(function(host){
+    var picker=buildPicker(host);
+    var vinId=host.getAttribute('data-vin');if(!vinId)return;
+    var vin=document.getElementById(vinId),msg=document.getElementById('vin-msg'),last='';
+    function say(t,c){msg.textContent=t;msg.className='vin-msg'+(c?' '+c:'');}
+    vin.addEventListener('input',function(){
+      var v=vin.value.toUpperCase().replace(/[^A-Z0-9]/g,'');if(v!==vin.value)vin.value=v;
+      if(v.length<17){say(v.length?(17-v.length)+' characters to go':'');return;}
+      if(/[IOQ]/.test(v)){say('VINs never contain the letters I, O or Q. Please check it.','err');return;}
+      if(v===last)return;last=v;say('Looking up your vehicle…');
+      fetch(API+'DecodeVinValues/'+v+'?format=json').then(function(r){return r.json()}).then(function(d){
+        var r=(d.Results||[])[0]||{};
+        if(!r.Make||!r.ModelYear){say("We couldn't decode that VIN. Please pick your vehicle below.",'err');return;}
+        picker.set(r.ModelYear,r.Make,r.Model).then(function(){
+          var mk=EURO.concat(OTHER).filter(function(x){return x.toLowerCase()===String(r.Make).toLowerCase()})[0]||r.Make;
+          say('✓ '+[r.ModelYear,mk,r.Model,r.Trim].filter(Boolean).join(' ')+(r.DisplacementL?' · '+parseFloat(r.DisplacementL).toFixed(1)+'L':''),'ok');
+        });
+      }).catch(function(){say("VIN lookup is unavailable right now. Please pick your vehicle below.",'err');});
+    });
+  });
+  // Preferred date: no past dates, no Sundays (shop closed)
+  (function(){
+    var d=document.getElementById('pdate'),n=new Date();n.setMinutes(n.getMinutes()-n.getTimezoneOffset());d.min=n.toISOString().slice(0,10);
+    d.addEventListener('change',function(){ if(d.value&&new Date(d.value+'T12:00').getDay()===0){d.setCustomValidity('We are closed on Sundays. Please pick another day.');d.reportValidity();}else d.setCustomValidity(''); });
+  })();
+  // Show the address field only for mobile visits
+  (function(){
+    var row=document.getElementById('addr-row'),addr=document.getElementById('addr');
+    function sync(){var m=document.getElementById('b-mobile').checked;row.hidden=!m;addr.required=m;}
+    document.querySelectorAll('input[name=svc2]').forEach(function(r){r.addEventListener('change',sync)});
+    window.pick=function(v){try{document.getElementById(v==='shop'?'b-shop':'b-mobile').checked=true;sync();}catch(e){}};
+    sync();
+  })();
+  // Carry the hero form over to the full booking form
+  (function(){
+    var q=document.getElementById('quick');
+    q.onsubmit=function(e){
+      e.preventDefault();
+      var mobile=document.getElementById('q-mobile').checked;window.pick(mobile?'mobile':'shop');
+      var s=q.querySelectorAll('[data-vehicle] select'),bs=document.querySelectorAll('#book [data-vehicle] select');
+      var phone=q.querySelector('input[type=tel]').value,bphone=document.querySelector('#book input[type=tel]');
+      if(phone&&!bphone.value)bphone.value=phone;
+      bs[0].value=s[0].value;bs[1].value=s[1].value;
+      bs[0].dispatchEvent(new Event('change'));
+      var mv=s[2].value;
+      setTimeout(function(){ if(mv){var wait=setInterval(function(){if(!bs[2].disabled){clearInterval(wait);bs[2].value=mv;bs[2].dispatchEvent(new Event('change'));}},100);setTimeout(function(){clearInterval(wait)},7000);} },0);
+      document.getElementById('book').scrollIntoView({behavior:'smooth'});
+      return false;
+    };
+  })();
 </script>
 </body>
 </html>
