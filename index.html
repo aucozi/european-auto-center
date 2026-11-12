@@ -1,588 +1,518 @@
 <!doctype html>
 <html lang="en">
-<script>document.documentElement.classList.add("js")</script>
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>European Auto Center — Vehicle Diagnostics</title>
-<meta name="description" content="Professional European vehicle diagnostics. In-shop diagnostics $160. Mobile diagnostics at your location $300.">
+<title>European Auto Center | Car Diagnostics in Fort Worth</title>
+<meta name="description" content="Dealer-level diagnostics for European cars in Fort Worth. $160 at our shop on Alta Mere Dr, or $300 and we come to you. Since 1975.">
 <link rel="icon" href="images/favicon.svg" type="image/svg+xml">
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,400..800&display=swap" rel="stylesheet">
 <style>
   :root{
-    --bg:#ffffff; --bg-alt:#f4f6f9; --ink:#0f1723; --muted:#5b6575; --line:#e3e7ee;
-    --brand:#0b2d5b; --brand-2:#123e7a; --accent:#f5b800; --accent-ink:#1a1400;
-    --ok:#1f9d55; --card:#ffffff; --shadow:0 10px 30px rgba(15,23,35,.08);
-  }
-  @media (prefers-color-scheme: dark){
-    :root:not([data-theme="light"]){
-      --bg:#0d1117; --bg-alt:#131a24; --ink:#e8edf4; --muted:#9aa6b8; --line:#243042;
-      --brand:#0a2448; --brand-2:#1a4b8f; --card:#161e2a; --shadow:0 10px 30px rgba(0,0,0,.35);
-    }
-  }
-  :root[data-theme="dark"]{
-    --bg:#0d1117; --bg-alt:#131a24; --ink:#e8edf4; --muted:#9aa6b8; --line:#243042;
-    --brand:#0a2448; --brand-2:#1a4b8f; --card:#161e2a; --shadow:0 10px 30px rgba(0,0,0,.35);
+    --canary:#F3DC6B; --canary-2:#EBCF4F; --rule:#d8c25a;
+    --ink:#1A2233; --ink-2:#2B3650; --steel:#5E6878; --line:#E2E5EA;
+    --paper:#F6F7F9; --white:#FFFFFF; --signal:#B3261E; --ok:#1E7A46;
+    --r:10px; --wrap:1180px;
+    --ease:cubic-bezier(.2,.7,.2,1);
   }
   *{box-sizing:border-box}
   [hidden]{display:none !important}
-  html{scroll-behavior:smooth}
-  body{margin:0;font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,sans-serif;background:var(--bg);color:var(--ink);line-height:1.55}
+  html{scroll-behavior:smooth;-webkit-text-size-adjust:100%}
+  body{margin:0;background:var(--paper);color:var(--ink);font:400 17px/1.6 Archivo,system-ui,sans-serif;font-variation-settings:"wdth" 100}
   a{color:inherit}
-  .wrap{max-width:1160px;margin:0 auto;padding:0 20px}
-  .btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;padding:14px 22px;border-radius:10px;font-weight:700;text-decoration:none;border:2px solid transparent;cursor:pointer;font-size:16px;transition:transform .15s, box-shadow .15s}
-  .btn:hover{transform:translateY(-1px)}
-  .btn-accent{background:var(--accent);color:var(--accent-ink);box-shadow:0 6px 18px rgba(245,184,0,.35)}
-  .btn-ghost{border-color:rgba(255,255,255,.5);color:#fff}
-  .btn-dark{background:var(--brand);color:#fff}
+  img{max-width:100%;display:block}
+  .wrap{max-width:var(--wrap);margin:0 auto;padding:0 24px}
+  :focus-visible{outline:3px solid var(--ink);outline-offset:2px;border-radius:4px}
+  section[id]{scroll-margin-top:80px}
+
+  /* Display type: condensed Archivo, like a garage sign */
+  .display{font-family:Archivo,sans-serif;font-variation-settings:"wdth" 68;font-weight:800;letter-spacing:-.01em;line-height:.98;margin:0}
+  h2.display{font-size:clamp(36px,5vw,60px);margin-bottom:16px}
+  .intro{color:var(--steel);font-size:19px;max-width:56ch;margin:0}
+
+  /* Buttons */
+  .btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:48px;padding:0 22px;border-radius:999px;border:2px solid transparent;font:700 16px/1 Archivo,sans-serif;text-decoration:none;cursor:pointer;transition:transform .15s var(--ease),background-color .15s,border-color .15s}
+  .btn:active{transform:scale(.97)}
+  .btn-ink{background:var(--ink);color:#fff}
+  .btn-ink:hover{background:var(--ink-2)}
+  .btn-line{border-color:var(--ink);color:var(--ink);background:transparent}
+  .btn-line:hover{background:var(--ink);color:#fff}
   .btn-block{width:100%}
+  .btn:disabled{opacity:.6;cursor:progress}
 
-  .wordmark{display:inline-flex;flex-direction:column;line-height:1;text-decoration:none;color:var(--ink)}
-  .wordmark .script{font-family:"Kaushan Script",cursive;font-weight:400;font-size:26px;color:#c4161c;letter-spacing:.2px;margin-bottom:-2px}
-  .wordmark .block{font-family:Inter,sans-serif;font-weight:800;font-size:15px;letter-spacing:3.2px;text-transform:uppercase}
-  .wordmark .tag{font-size:10.5px;font-weight:600;letter-spacing:1.6px;color:var(--muted);margin-top:4px;text-transform:uppercase}
-  footer .wordmark{color:#fff}
-  footer .wordmark .script{color:#ff4a4f}
-  .reviews{display:grid;grid-template-columns:repeat(3,1fr);gap:20px}
-  .rev{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:24px;display:flex;flex-direction:column;gap:12px}
-  .rev .stars{color:#f5b800;font-size:18px;letter-spacing:2px}
-  .rev p{margin:0;color:var(--ink);font-size:15.5px;flex:1}
-  .rev .who{color:var(--muted);font-size:13.5px}
-  .rating-big{display:flex;align-items:center;justify-content:center;gap:14px;margin:-20px 0 34px;flex-wrap:wrap}
-  .rating-big b{font-size:44px;letter-spacing:-1px}
-  .rating-big .stars{color:#f5b800;font-size:24px;letter-spacing:3px}
-  @media (max-width:900px){ .reviews{grid-template-columns:1fr} }
-  /* ---------- header ---------- */
-  .site-header{--hh:124px;--bw:132px;position:fixed;top:0;left:0;right:0;z-index:50;background:transparent;transition:background-color .35s ease,box-shadow .35s ease,backdrop-filter .35s ease}
-  .site-header .wrap{display:flex;align-items:center;gap:24px;height:var(--hh);transition:height .4s cubic-bezier(.2,.8,.2,1)}
-  .brand{display:flex;align-items:center;gap:14px;text-decoration:none;color:#fff;flex:none}
-  .brand-badge{width:var(--bw);background:#fff;border-radius:14px;padding:8px;box-shadow:0 10px 30px rgba(0,0,0,.28);transition:width .4s cubic-bezier(.2,.8,.2,1),padding .4s,border-radius .4s,box-shadow .4s}
-  .brand-badge img{display:block;width:100%;height:auto}
-  .brand-text{font-weight:800;font-size:18px;letter-spacing:-.2px;line-height:1.2;transition:color .35s}
-  .brand-text small{display:block;font-weight:600;font-size:11.5px;letter-spacing:1.2px;text-transform:uppercase;opacity:.75;margin-top:3px}
-  .main-nav{margin-left:auto}
-  .main-nav ul{display:flex;gap:4px;list-style:none;margin:0;padding:0}
-  .main-nav a{display:block;padding:8px 12px;border-radius:999px;text-decoration:none;font-weight:600;font-size:15px;color:rgba(255,255,255,.86);transition:color .2s,background-color .2s}
-  .main-nav a:hover{background:rgba(255,255,255,.12);color:#fff}
-  .nav-cta{padding:11px 18px;font-size:15px;white-space:nowrap;flex:none}
-  .icon-btn{display:none;width:44px;height:44px;border-radius:12px;border:1px solid rgba(255,255,255,.3);background:transparent;color:#fff;align-items:center;justify-content:center;cursor:pointer;flex:none;text-decoration:none;transition:color .35s,border-color .35s,background-color .2s}
-  .icon-btn svg{width:20px;height:20px}
-  .site-header.compact{--hh:68px;--bw:62px;background:rgba(255,255,255,.86);-webkit-backdrop-filter:saturate(180%) blur(14px);backdrop-filter:saturate(180%) blur(14px);box-shadow:0 1px 0 rgba(15,23,35,.08),0 10px 30px rgba(15,23,35,.07)}
-  .site-header.compact .brand-badge{padding:3px;border-radius:10px;box-shadow:none}
-  .site-header.compact .brand{color:var(--ink)}
-  .site-header.compact .main-nav a{color:var(--muted)}
-  .site-header.compact .main-nav a:hover{background:var(--bg-alt);color:var(--ink)}
-  .site-header.compact .icon-btn{color:var(--ink);border-color:var(--line)}
-  @media (prefers-color-scheme: dark){ :root:not([data-theme="light"]) .site-header.compact{background:rgba(13,17,23,.82);box-shadow:0 1px 0 rgba(255,255,255,.06)} }
-  :root[data-theme="dark"] .site-header.compact{background:rgba(13,17,23,.82);box-shadow:0 1px 0 rgba(255,255,255,.06)}
-  .mobile-menu{position:fixed;left:0;right:0;top:0;z-index:49;background:var(--bg);padding:84px 20px 24px;box-shadow:0 20px 50px rgba(0,0,0,.25);transform:translateY(-102%);transition:transform .38s cubic-bezier(.2,.8,.2,1);visibility:hidden}
-  .mobile-menu.open{transform:none;visibility:visible}
-  .mobile-menu a.mm-link{display:block;padding:14px 4px;font-size:19px;font-weight:700;text-decoration:none;color:var(--ink);border-bottom:1px solid var(--line)}
-  .mobile-menu .mm-actions{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:18px}
-  .mobile-menu .mm-info{color:var(--muted);font-size:14px;margin:16px 0 0}
-  .menu-open .site-header{--hh:68px;--bw:62px;background:var(--bg)}
-  .menu-open .site-header .brand{color:var(--ink)} .menu-open .site-header .icon-btn{color:var(--ink);border-color:var(--line)}
-  .menu-open .site-header .brand-badge{padding:3px;box-shadow:none}
-  @media (max-width:1060px){ .main-nav{display:none} .icon-btn{display:inline-flex} .site-header .call-btn{margin-left:auto} }
-  @media (max-width:640px){ .site-header{--hh:96px;--bw:100px} .site-header.compact,.menu-open .site-header{--hh:62px;--bw:54px} .brand-text{display:none} .nav-cta{padding:10px 14px;font-size:14px} .site-header .wrap{gap:10px} }
-  @media (prefers-reduced-motion: reduce){ .site-header,.site-header *,.mobile-menu{transition:none !important} }
-  section[id],[id="book"]{scroll-margin-top:76px}
-  .hero-contact{display:flex;flex-wrap:wrap;gap:8px 18px;margin-top:22px;padding-top:20px;border-top:1px solid rgba(255,255,255,.14);color:#c4cfe0;font-size:14.5px}
-  .hero-contact a{color:#fff;text-decoration:none;font-weight:600}
-  .hero-contact a:hover{text-decoration:underline}
-  .logo-badge{background:#fff;border-radius:14px;padding:12px;box-shadow:0 8px 24px rgba(0,0,0,.25)}
-  .logo-badge img{display:block;width:100%;height:auto}
+  /* Header */
+  .top{position:sticky;top:0;z-index:40;background:rgba(246,247,249,.94);border-bottom:1px solid transparent;transition:border-color .2s}
+  .top.scrolled{border-color:var(--line)}
+  @supports (backdrop-filter:blur(8px)){.top{background:rgba(246,247,249,.82);backdrop-filter:blur(8px)}}
+  .top .wrap{display:flex;align-items:center;gap:20px;height:72px}
+  .brand{display:flex;align-items:center;gap:12px;text-decoration:none;flex:none}
+  .brand img{width:64px;height:auto}
+  .brand span{font-weight:700;font-size:16px;line-height:1.15}
+  .brand small{display:block;font-weight:500;color:var(--steel);font-size:13px}
+  .nav{display:flex;gap:4px;margin-left:auto}
+  .nav a{padding:8px 12px;border-radius:999px;text-decoration:none;font-weight:600;font-size:15px;color:var(--steel)}
+  .nav a:hover{color:var(--ink);background:#e9ecf0}
+  .top .call{display:none;width:48px;height:48px;border-radius:50%;border:1.5px solid var(--line);align-items:center;justify-content:center;color:var(--ink);margin-left:auto;background:#fff}
+  .top .call svg{width:20px;height:20px}
+  .top .btn{min-height:44px;padding:0 18px;font-size:15px}
+  @media (max-width:960px){.nav{display:none}.top .call{display:inline-flex}}
+  @media (max-width:520px){.brand span{display:none}.brand img{width:56px}.top .wrap{gap:10px}}
 
-  /* hero */
-  .hero{background:linear-gradient(135deg,#08203f 0%,#0b2d5b 55%,#123e7a 100%);color:#fff;position:relative;overflow:hidden}
-  .hero::after{content:"";position:absolute;right:-180px;top:-120px;width:560px;height:560px;border-radius:50%;background:radial-gradient(circle,rgba(245,184,0,.22),transparent 65%)}
-  .hero .wrap{display:grid;grid-template-columns:1.15fr .85fr;gap:48px;padding:176px 20px 90px;position:relative;z-index:1}
-  .eyebrow{display:inline-block;background:rgba(245,184,0,.15);color:var(--accent);border:1px solid rgba(245,184,0,.4);padding:6px 12px;border-radius:999px;font-weight:600;font-size:13px;letter-spacing:.4px;text-transform:uppercase}
-  .hero h1{font-size:clamp(34px,5vw,56px);line-height:1.05;margin:18px 0 18px;letter-spacing:-1.2px}
-  .hero h1 span{color:var(--accent)}
-  .hero p.lead{font-size:19px;color:#d4ddeb;max-width:560px;margin:0 0 28px}
-  .hero-ctas{display:flex;gap:12px;flex-wrap:wrap}
-  .hero-points{display:flex;gap:22px;flex-wrap:wrap;margin-top:30px;color:#c4cfe0;font-size:15px}
-  .hero-points div::before{content:"✓ ";color:var(--accent);font-weight:800}
-  .svc-card{background:#fff;color:#0f1723;border-radius:20px;padding:26px;box-shadow:0 24px 60px rgba(0,0,0,.35);align-self:center}
-  .svc-card h3{margin:0 0 4px;font-size:22px;letter-spacing:-.3px}
-  .svc-card>p{margin:0 0 18px;color:#5b6575;font-size:14.5px}
-  .svc-opt{display:grid;grid-template-columns:auto 1fr auto auto;align-items:center;gap:14px;padding:16px;border:1.5px solid #e3e7ee;border-radius:14px;text-decoration:none;color:inherit;margin-bottom:12px;transition:border-color .2s,box-shadow .2s,transform .2s}
-  .svc-opt:hover,.svc-opt:focus-visible{border-color:#0b2d5b;box-shadow:0 8px 22px rgba(11,45,91,.12);transform:translateY(-1px);outline:none}
-  .svc-ic{width:44px;height:44px;border-radius:12px;background:#eef3fb;color:#0b2d5b;display:grid;place-items:center}
-  .svc-ic svg{width:24px;height:24px}
-  .svc-txt b{display:block;font-size:16px}
-  .svc-txt small{display:block;color:#5b6575;font-size:13px;margin-top:2px}
-  .svc-price{font-weight:800;font-size:24px;color:#0b2d5b;letter-spacing:-.5px}
-  .svc-go{width:32px;height:32px;border-radius:50%;background:var(--accent);color:var(--accent-ink);display:grid;place-items:center}
-  .svc-go svg{width:16px;height:16px}
-  .svc-foot{margin-top:6px;padding-top:14px;border-top:1px solid #eef0f4;font-size:13.5px;color:#5b6575;text-align:center}
-  .svc-foot .stars{color:#f5b800;letter-spacing:1px;margin-right:4px}
-  @media (max-width:420px){ .svc-opt{grid-template-columns:auto 1fr auto;gap:12px;padding:14px} .svc-go{display:none} .svc-price{font-size:21px} }
-  .ico{display:inline-block;width:16px;height:16px;vertical-align:-3px;margin-right:6px;color:var(--accent)}
-  .check .ic{width:46px;height:46px;border-radius:12px;background:#eef3fb;color:var(--brand-2);display:grid;place-items:center;margin-bottom:14px}
-  .check .ic svg{width:24px;height:24px}
-  @media (prefers-color-scheme: dark){ :root:not([data-theme="light"]) .check .ic{background:#1b2738;color:#8fb4ff} }
-  :root[data-theme="dark"] .check .ic{background:#1b2738;color:#8fb4ff}
-  .lbl{display:block;font-size:13px;font-weight:600;color:#5b6575;margin:0 0 6px 2px}
-  .visit{display:grid;grid-template-columns:.9fr 1.3fr;gap:20px;align-items:stretch}
-  .visit-card{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:28px;box-shadow:var(--shadow)}
-  .visit-card h3{margin:0 0 4px;font-size:20px}
-  .visit-card .muted{color:var(--muted);margin:0 0 18px;font-size:15px}
-  .hours{width:100%;border-collapse:collapse;margin:6px 0 20px;font-size:15px}
-  .hours td{padding:8px 0;border-bottom:1px dashed var(--line)}
-  .hours td:last-child{text-align:right;font-weight:600}
-  .visit-actions{display:grid;grid-template-columns:1fr 1fr;gap:10px}
-  .visit-alt{margin-top:18px;font-size:14px;color:var(--muted)}
-  .map{border-radius:18px;overflow:hidden;border:1px solid var(--line);box-shadow:var(--shadow);min-height:380px;background:var(--bg-alt)}
-  .map iframe{width:100%;height:100%;min-height:380px;border:0;display:block}
-  @media (max-width:860px){ .visit{grid-template-columns:1fr} .map,.map iframe{min-height:300px} }
-  @media (max-width:560px){
-    .quote-card .row2{grid-template-columns:1fr;gap:0}
-    .step{display:grid;grid-template-columns:auto 1fr;column-gap:14px;padding:18px}
-    .step .n{grid-row:span 2;margin:0}
-    .step h4{margin:6px 0 4px}
-    .check{display:grid;grid-template-columns:auto 1fr;column-gap:14px;padding:18px}
-    .check .ic{grid-row:span 2;margin:0}
-    .check h4{margin:4px 0 4px}
-    section{padding:64px 0}
-  }
-  .quote-card{background:#fff;color:#0f1723;border-radius:16px;padding:26px;box-shadow:0 20px 50px rgba(0,0,0,.3);align-self:center}
-  .quote-card h3{margin:0 0 4px;font-size:21px}
-  .quote-card p{margin:0 0 18px;color:#5b6575;font-size:14px}
-  .seg{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:16px}
-  .seg label{border:2px solid #e3e7ee;border-radius:12px;padding:14px;cursor:pointer;display:block}
-  .seg input{display:none}
-  .seg input:checked + label{border-color:#0b2d5b;background:#eef3fb}
-  .seg .t{font-weight:700;font-size:15px}
-  .seg .p{font-weight:800;font-size:26px;color:#0b2d5b}
-  .seg .s{font-size:12.5px;color:#5b6575}
-  .field{margin-bottom:12px}
-  .field input,.field select,.field textarea{width:100%;padding:13px 14px;border:1px solid #d6dce6;border-radius:10px;font:inherit;font-size:15px;background:#fff;color:#0f1723}
-  .row2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+  /* Hero */
+  .hero{padding:56px 0 96px}
+  .hero .wrap{display:grid;grid-template-columns:1fr 480px;grid-template-areas:"copy order" "facts order";column-gap:64px;align-items:start}
+  .hero-copy{grid-area:copy}.hero-facts{grid-area:facts}
+  .facts span{line-height:1.35;display:block;margin-top:4px}
+  .hero h1{font-size:clamp(46px,7vw,88px);margin:8px 0 24px}
+  .hero .lede{font-size:20px;max-width:30ch;margin:0 0 28px;color:var(--ink-2)}
+  .facts{display:grid;grid-template-columns:repeat(2,minmax(0,200px));gap:18px 28px;margin:0 0 32px;padding:0;list-style:none}
+  .facts b{display:block;font-variation-settings:"wdth" 68;font-size:34px;font-weight:800;line-height:1}
+  .facts span{color:var(--steel);font-size:15px}
+  .where{display:flex;flex-wrap:wrap;gap:10px 24px;color:var(--steel);font-size:15px;margin:0}
+  .where a{color:var(--ink);font-weight:600;text-decoration:none;border-bottom:1.5px solid var(--canary-2)}
+  .where a:hover{border-color:var(--ink)}
+  @media (max-width:1000px){.hero .wrap{grid-template-columns:1fr;grid-template-areas:"copy" "order" "facts";row-gap:36px}.hero{padding:32px 0 72px}.hero .lede{max-width:40ch}}
+
+  /* The work order (the one booking form) */
+  .order{background:var(--canary);border-radius:6px;box-shadow:0 1px 0 #c9b24a,0 24px 50px -24px rgba(26,34,51,.45);position:relative;overflow:hidden}
+  .order::before{content:"";position:absolute;inset:0;background:repeating-linear-gradient(to bottom,transparent 0 39px,rgba(120,100,20,.13) 39px 40px);pointer-events:none}
+  .order-head{position:relative;display:flex;justify-content:space-between;align-items:baseline;padding:22px 26px 14px;border-bottom:2px solid var(--ink)}
+  .order-head h2{font-variation-settings:"wdth" 68;font-weight:800;font-size:28px;margin:0;line-height:1}
+  .order-head .step{font-size:14px;font-weight:600;color:var(--ink-2)}
+  .order form{position:relative;padding:20px 26px 26px}
+  .lbl{display:block;font-weight:600;font-size:14px;margin:0 0 6px}
+  .lbl i{font-style:normal;font-weight:400;color:#5a5320}
+  .field{margin-bottom:16px}
+  .field input,.field select,.field textarea{width:100%;min-height:48px;padding:12px 14px;border:1.5px solid rgba(26,34,51,.28);border-radius:8px;background:#fffdf3;color:var(--ink);font:400 16px/1.3 Archivo,sans-serif;transition:border-color .15s,box-shadow .15s}
+  .field input:focus,.field select:focus,.field textarea:focus{outline:none;border-color:var(--ink);box-shadow:0 0 0 3px rgba(26,34,51,.18)}
+  .field input::placeholder,.field textarea::placeholder{color:#8b8456}
+  .field textarea{min-height:84px;resize:vertical}
+  .field select{appearance:none;-webkit-appearance:none;background-image:linear-gradient(45deg,transparent 50%,var(--ink) 50%),linear-gradient(135deg,var(--ink) 50%,transparent 50%);background-position:calc(100% - 19px) 52%,calc(100% - 14px) 52%;background-size:5px 5px;background-repeat:no-repeat;padding-right:36px}
+  .field select:disabled{opacity:.55}
+  .two{display:grid;grid-template-columns:1fr 1fr;gap:0 12px}
+  .svc{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:0 0 18px;border:0;padding:0}
+  .svc legend{font-weight:600;font-size:14px;margin-bottom:6px;padding:0}
+  .svc input{position:absolute;opacity:0;pointer-events:none}
+  .svc label{display:block;cursor:pointer;background:#fffdf3;border:1.5px solid rgba(26,34,51,.28);border-radius:8px;padding:12px 14px;transition:border-color .15s,background-color .15s}
+  .svc label b{display:flex;justify-content:space-between;align-items:baseline;font-size:16px}
+  .svc label b em{font-style:normal;font-variation-settings:"wdth" 68;font-size:26px;font-weight:800}
+  .svc label small{display:block;color:#5a5320;font-size:13.5px;margin-top:2px}
+  .svc input:checked+label{background:var(--ink);border-color:var(--ink);color:#fff}
+  .svc input:checked+label small{color:#c9d0dc}
+  .svc input:focus-visible+label{outline:3px solid var(--ink);outline-offset:2px}
   .vehicle{display:grid;grid-template-columns:.8fr 1.1fr 1.1fr;gap:10px}
-  .vehicle .field{margin-bottom:12px}
-  .vehicle .model-other{grid-column:1/-1;margin-top:-2px}
-  .field select{appearance:none;-webkit-appearance:none;background-image:linear-gradient(45deg,transparent 50%,#5b6575 50%),linear-gradient(135deg,#5b6575 50%,transparent 50%);background-position:calc(100% - 18px) 55%,calc(100% - 13px) 55%;background-size:5px 5px;background-repeat:no-repeat;padding-right:32px}
-  .field select:disabled{background-color:#f3f5f8;color:#8a93a3}
-  .vin-msg{font-size:13px;margin-top:6px;min-height:0;color:#5b6575}
-  .vin-msg.ok{color:#17703d}.vin-msg.err{color:#a12121}
-  @media (max-width:520px){ .vehicle{grid-template-columns:1fr 1fr} .vehicle .field:first-child{grid-column:1/-1} }
-  .fine{font-size:12px;color:#7a8494;text-align:center;margin-top:10px}
-  @media (max-width:900px){ .hero .wrap{grid-template-columns:1fr;padding:150px 20px 64px} }
-  @media (max-width:640px){ .hero .wrap{padding-top:124px} }
+  .vehicle .field{margin-bottom:16px}
+  .vehicle .model-other{grid-column:1/-1;margin-top:-4px}
+  .vin-msg{font-size:14px;margin-top:6px}
+  .vin-msg.ok{color:var(--ok);font-weight:600}.vin-msg.err{color:var(--signal)}
+  .or{display:flex;align-items:center;gap:10px;font-size:13px;color:#5a5320;margin:-4px 0 10px}
+  .or::before,.or::after{content:"";flex:1;height:1px;background:rgba(26,34,51,.2)}
+  .order .fine{font-size:13.5px;color:#4d4719;margin:12px 0 0;text-align:center}
+  .order .fine a{font-weight:600}
+  .back{background:none;border:0;padding:0;font:600 14px Archivo,sans-serif;text-decoration:underline;cursor:pointer;color:var(--ink);margin:0 0 14px}
+  .summary{background:rgba(255,253,243,.7);border:1.5px dashed rgba(26,34,51,.35);border-radius:8px;padding:10px 14px;font-size:14.5px;margin-bottom:16px}
+  @media (max-width:520px){.order-head,.order form{padding-left:18px;padding-right:18px}.two{grid-template-columns:1fr}.vehicle{grid-template-columns:1fr 1fr}.vehicle .field:first-child{grid-column:1/-1}}
 
-  /* trust strip */
-  .strip{background:var(--bg-alt);border-bottom:1px solid var(--line)}
-  .strip .wrap{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;padding:26px 20px;text-align:center}
-  .strip b{display:block;font-size:26px;color:var(--brand-2)}
-  .strip span{color:var(--muted);font-size:14px}
-  @media (max-width:700px){ .strip .wrap{grid-template-columns:repeat(2,1fr)} }
-  :root[data-theme="dark"] .strip b{color:var(--accent)}
-  @media (prefers-color-scheme: dark){ :root:not([data-theme="light"]) .strip b{color:var(--accent)} }
+  /* Sections */
+  .sec{padding:112px 0}
+  .sec.white{background:var(--white)}
+  .sec-head{margin-bottom:56px}
+  @media (max-width:700px){.sec{padding:80px 0}.sec-head{margin-bottom:40px}}
 
-  section{padding:84px 0}
-  section.alt{background:var(--bg-alt)}
-  .sec-head{text-align:center;max-width:720px;margin:0 auto 48px}
-  .sec-head .k{color:var(--brand-2);font-weight:700;text-transform:uppercase;letter-spacing:1px;font-size:13px}
-  .sec-head h2{font-size:clamp(28px,3.6vw,40px);margin:8px 0 12px;letter-spacing:-.6px;line-height:1.15}
-  .sec-head p{color:var(--muted);font-size:17px;margin:0}
-  :root[data-theme="dark"] .sec-head .k{color:var(--accent)}
-  @media (prefers-color-scheme: dark){ :root:not([data-theme="light"]) .sec-head .k{color:var(--accent)} }
+  /* Process: a real sequence, so numbered */
+  .process{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(4,1fr);gap:32px;counter-reset:s}
+  .process li{position:relative;padding-top:28px;border-top:2px solid var(--ink);counter-increment:s}
+  .process li::before{content:counter(s);position:absolute;top:-19px;left:0;width:36px;height:36px;border-radius:50%;background:var(--canary);border:2px solid var(--ink);display:grid;place-items:center;font-weight:800;font-size:15px}
+  .process h3{font-size:20px;margin:0 0 8px}
+  .process p{margin:0;color:var(--steel)}
+  @media (max-width:900px){.process{grid-template-columns:1fr 1fr;row-gap:48px}}
+  @media (max-width:560px){.process{grid-template-columns:1fr;gap:40px}}
 
-  /* steps */
-  .steps{display:grid;grid-template-columns:repeat(4,1fr);gap:20px}
-  .step{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:26px}
-  .step .n{width:40px;height:40px;border-radius:50%;background:var(--accent);color:var(--accent-ink);display:grid;place-items:center;font-weight:800;margin-bottom:14px}
-  .step h4{margin:0 0 8px;font-size:18px}
-  .step p{margin:0;color:var(--muted);font-size:15px}
-  @media (max-width:900px){ .steps{grid-template-columns:1fr 1fr} }
-  @media (max-width:560px){ .steps{grid-template-columns:1fr} }
+  /* What we check */
+  .checks{display:grid;grid-template-columns:repeat(3,1fr);gap:0;border-top:1px solid var(--line)}
+  .checks div{padding:28px 28px 28px 0;border-bottom:1px solid var(--line)}
+  .checks h3{font-size:19px;margin:0 0 6px}
+  .checks p{margin:0;color:var(--steel);font-size:16px}
+  @media (max-width:900px){.checks{grid-template-columns:1fr 1fr}}
+  @media (max-width:560px){.checks{grid-template-columns:1fr}.checks div{padding-right:0}}
 
-  /* pricing */
-  .plans{display:grid;grid-template-columns:1fr 1fr;gap:26px;max-width:940px;margin:0 auto}
-  .plan{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:34px;box-shadow:var(--shadow);position:relative;display:flex;flex-direction:column}
-  .plan.feat{border:2px solid var(--brand-2)}
-  .badge{position:absolute;top:-13px;left:34px;background:var(--accent);color:var(--accent-ink);font-weight:800;font-size:12px;padding:5px 12px;border-radius:999px;letter-spacing:.4px;text-transform:uppercase}
-  .plan h3{margin:0 0 6px;font-size:22px}
-  .plan .sub{color:var(--muted);margin:0 0 18px}
-  .price{font-size:52px;font-weight:800;letter-spacing:-1.5px;line-height:1}
-  .price small{font-size:16px;font-weight:600;color:var(--muted);letter-spacing:0}
-  .plan ul{list-style:none;padding:0;margin:24px 0 28px;flex:1}
-  .plan li{padding:9px 0 9px 28px;position:relative;border-bottom:1px dashed var(--line);font-size:15.5px}
-  .plan li::before{content:"✓";position:absolute;left:0;color:var(--ok);font-weight:800}
-  @media (max-width:780px){ .plans{grid-template-columns:1fr} }
-
-  /* checks */
-  .checks{display:grid;grid-template-columns:repeat(3,1fr);gap:20px}
-  .check{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:24px}
-  .check h4{margin:0 0 6px;font-size:17px}
-  .check p{margin:0;color:var(--muted);font-size:14.5px}
-  @media (max-width:900px){ .checks{grid-template-columns:1fr 1fr} }
-  @media (max-width:560px){ .checks{grid-template-columns:1fr} }
-
-  /* report */
-  .report{display:grid;grid-template-columns:1fr 1fr;gap:48px;align-items:center}
-  .report h2{font-size:clamp(28px,3.4vw,38px);margin:0 0 14px;letter-spacing:-.6px;line-height:1.15}
-  .report p{color:var(--muted);font-size:17px}
-  .report ul{padding-left:20px;color:var(--muted)}
+  /* Report */
+  .report{display:grid;grid-template-columns:1fr 1fr;gap:72px;align-items:center}
+  .report ul{padding-left:20px;color:var(--ink-2);margin:24px 0 32px}
   .report li{margin:6px 0}
-  .mock{background:var(--card);border:1px solid var(--line);border-radius:16px;box-shadow:var(--shadow);overflow:hidden}
-  .mock-h{background:var(--brand);color:#fff;padding:16px 20px;display:flex;justify-content:space-between;font-size:14px}
-  .mock-h b{font-size:16px}
-  .mock-b{padding:18px 20px}
-  .mrow{display:flex;justify-content:space-between;align-items:center;padding:11px 0;border-bottom:1px solid var(--line);font-size:14.5px}
-  .mrow:last-child{border-bottom:0}
-  .pill{font-size:12px;font-weight:700;padding:4px 10px;border-radius:999px}
-  .p-ok{background:#e3f6ea;color:#17703d}
-  .p-warn{background:#fff4d6;color:#8a6200}
-  .p-bad{background:#fde4e4;color:#a12121}
-  .code{font-family:ui-monospace,Menlo,monospace;font-size:12.5px;color:var(--muted)}
-  @media (max-width:860px){ .report{grid-template-columns:1fr} }
+  .sheet{background:#fff;border:1px solid var(--line);border-radius:6px;box-shadow:0 30px 60px -30px rgba(26,34,51,.35);padding:28px}
+  .sheet header{display:flex;justify-content:space-between;align-items:flex-start;gap:16px;border-bottom:2px solid var(--ink);padding-bottom:14px;margin-bottom:6px}
+  .sheet header b{font-variation-settings:"wdth" 68;font-size:26px;font-weight:800;line-height:1}
+  .sheet header small{color:var(--steel);font-size:14px;display:block;margin-top:4px}
+  .sheet header img{width:72px}
+  .row{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:12px 0;border-bottom:1px solid var(--line);font-size:16px}
+  .row:last-child{border:0}
+  .row small{display:block;color:var(--steel);font-size:14px}
+  .tag{flex:none;font-size:13px;font-weight:700;padding:4px 10px;border-radius:999px}
+  .t-ok{background:#e2f3e8;color:#16603a}.t-watch{background:#fbf1c7;color:#6b5400}.t-fix{background:#f9e0de;color:#8f1e17}
+  @media (max-width:900px){.report{grid-template-columns:1fr;gap:48px}}
 
-  /* brands */
-  .brands{display:flex;flex-wrap:wrap;justify-content:center;gap:12px}
-  .brands span{border:1px solid var(--line);background:var(--card);padding:12px 20px;border-radius:10px;font-weight:700;color:var(--muted)}
+  /* Prices */
+  .prices{display:grid;grid-template-columns:1fr 1fr;gap:24px}
+  .price{background:#fff;border:1px solid var(--line);border-radius:var(--r);padding:36px;display:flex;flex-direction:column}
+  .price.mobile{background:var(--ink);color:#fff;border-color:var(--ink)}
+  .price h3{font-size:22px;margin:0}
+  .price .for{color:var(--steel);margin:4px 0 22px}
+  .price.mobile .for{color:#b7c0cf}
+  .price .amt{font-variation-settings:"wdth" 68;font-weight:800;font-size:72px;line-height:1;margin-bottom:22px}
+  .price ul{list-style:none;padding:0;margin:0 0 30px;flex:1}
+  .price li{padding:10px 0 10px 26px;border-top:1px solid var(--line);position:relative}
+  .price.mobile li{border-color:#33405c}
+  .price li::before{content:"";position:absolute;left:2px;top:17px;width:10px;height:6px;border-left:2px solid currentColor;border-bottom:2px solid currentColor;transform:rotate(-45deg)}
+  .price.mobile .btn{background:var(--canary);color:var(--ink)}
+  .price.mobile .btn:hover{background:#f7e690}
+  .note{color:var(--steel);font-size:15px;margin:20px 0 0}
+  @media (max-width:800px){.prices{grid-template-columns:1fr}.price{padding:28px}}
 
-  /* faq */
-  .faq{max-width:820px;margin:0 auto}
-  details{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:18px 22px;margin-bottom:12px}
-  summary{cursor:pointer;font-weight:700;font-size:16.5px;list-style:none;display:flex;justify-content:space-between;gap:12px}
-  summary::-webkit-details-marker{display:none}
-  summary::after{content:"+";font-size:22px;line-height:1;color:var(--brand-2)}
-  details[open] summary::after{content:"–"}
-  details p{color:var(--muted);margin:12px 0 0}
+  /* Brands: the one type moment */
+  .brands{list-style:none;margin:0;padding:0;display:flex;flex-wrap:wrap;gap:4px 28px;font-variation-settings:"wdth" 68;font-weight:800;font-size:clamp(34px,5.4vw,68px);line-height:1.08;letter-spacing:-.01em}
+  .brands li:nth-child(even){color:#9aa3b2}
+  .brands-note{color:var(--steel);margin:28px 0 0;font-size:18px}
 
-  /* cta */
-  .cta{background:linear-gradient(135deg,#08203f,#123e7a);color:#fff;text-align:center;padding:76px 0}
-  .cta h2{font-size:clamp(28px,4vw,42px);margin:0 0 12px;letter-spacing:-.6px}
-  .cta p{color:#c9d4e5;font-size:18px;margin:0 0 28px}
+  /* Visit */
+  .visit{display:grid;grid-template-columns:420px 1fr;gap:24px}
+  .visit-card{background:#fff;border:1px solid var(--line);border-radius:var(--r);padding:32px}
+  .visit-card h3{font-size:22px;margin:0 0 4px}
+  .visit-card p{margin:0;color:var(--steel)}
+  .hours{width:100%;border-collapse:collapse;margin:22px 0 26px;font-size:16px}
+  .hours td{padding:10px 0;border-bottom:1px solid var(--line)}
+  .hours td+td{text-align:right;font-weight:600}
+  .acts{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+  .second{margin-top:22px;font-size:15px}
+  @media (max-width:480px){.acts{grid-template-columns:1fr}.visit-card{padding:24px}}
+  .map{border-radius:var(--r);overflow:hidden;border:1px solid var(--line);min-height:420px;background:#e9ecf0}
+  .map iframe{display:block;width:100%;height:100%;min-height:420px;border:0}
+  @media (max-width:900px){.visit{grid-template-columns:1fr}.map,.map iframe{min-height:320px}}
 
-  footer{background:#06172e;color:#9fb0c8;padding:50px 0 30px;font-size:14.5px}
-  footer .cols{display:grid;grid-template-columns:1.4fr 1fr 1fr;gap:30px}
-  footer h5{color:#fff;font-size:15px;margin:0 0 12px}
-  footer a{text-decoration:none}
-  footer .copy{border-top:1px solid #1b2c46;margin-top:34px;padding-top:20px;font-size:13px;display:flex;justify-content:space-between;flex-wrap:wrap;gap:10px}
-  @media (max-width:760px){ footer .cols{grid-template-columns:1fr} }
+  /* FAQ */
+  .faq{max-width:820px}
+  .faq details{border-bottom:1px solid var(--line)}
+  .faq summary{list-style:none;cursor:pointer;display:flex;justify-content:space-between;gap:20px;padding:22px 0;font-weight:700;font-size:19px}
+  .faq summary::-webkit-details-marker{display:none}
+  .faq summary::after{content:"";flex:none;width:12px;height:12px;margin-top:6px;border-right:2px solid var(--ink);border-bottom:2px solid var(--ink);transform:rotate(45deg);transition:transform .2s var(--ease)}
+  .faq details[open] summary::after{transform:rotate(-135deg)}
+  .faq details p{margin:-6px 0 22px;color:var(--steel);max-width:68ch}
 
-  .ph{background:rgba(245,184,0,.18);border-bottom:1px dashed var(--accent);padding:0 3px;border-radius:3px}
-  .field textarea{resize:vertical;min-height:84px;line-height:1.45}
-  .btn-outline{background:transparent;border-color:#d6dce6;color:#0f1723;margin-top:10px}
-  .modal{position:fixed;inset:0;background:rgba(6,14,28,.6);display:flex;align-items:center;justify-content:center;padding:16px;z-index:200}
-  .modal[hidden]{display:none}
-  .modal-card{background:#fff;color:#0f1723;border-radius:18px;max-width:460px;width:100%;padding:26px;position:relative;box-shadow:0 30px 80px rgba(0,0,0,.4);max-height:calc(100vh - 32px);overflow:auto}
-  .modal-card h3{margin:0 0 6px;font-size:21px;padding-right:30px}
-  .modal-sub{margin:0 0 14px;color:#5b6575;font-size:14.5px}
-  .modal-x{position:absolute;top:12px;right:14px;border:0;background:none;font-size:28px;line-height:1;cursor:pointer;color:#5b6575}
-  .msg-preview{background:#f4f6f9;border:1px solid #e3e7ee;border-radius:12px;padding:14px;font:13.5px/1.5 ui-monospace,Menlo,monospace;white-space:pre-wrap;word-break:break-word;margin:0 0 16px;max-height:240px;overflow:auto}
-  .toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%) translateY(120px);background:#0f1723;color:#fff;padding:14px 20px;border-radius:12px;box-shadow:0 10px 30px rgba(0,0,0,.3);transition:transform .3s,opacity .3s;opacity:0;pointer-events:none;z-index:100;max-width:calc(100% - 32px)}
-  .toast.show{transform:translateX(-50%) translateY(0);opacity:1}
+  /* Closing band */
+  .close{background:var(--canary);padding:88px 0}
+  .close .wrap{display:flex;justify-content:space-between;align-items:center;gap:32px;flex-wrap:wrap}
+  .close h2{font-size:clamp(36px,5vw,60px);max-width:16ch}
+  .close .btns{display:flex;gap:12px;flex-wrap:wrap}
+
+  footer{background:var(--ink);color:#b7c0cf;padding:64px 0 32px;font-size:15px}
+  footer .cols{display:grid;grid-template-columns:1.3fr 1fr 1fr;gap:40px}
+  footer h3{color:#fff;font-size:16px;margin:0 0 12px}
+  footer p{margin:0}
+  footer a{color:#fff;text-decoration:none}
+  footer a:hover{text-decoration:underline}
+  footer .badge{background:#fff;border-radius:8px;padding:8px;width:140px;margin-bottom:16px}
+  footer .legal{border-top:1px solid #33405c;margin-top:48px;padding-top:20px;display:flex;justify-content:space-between;flex-wrap:wrap;gap:8px;font-size:14px}
+  @media (max-width:760px){footer .cols{grid-template-columns:1fr}}
+
+  /* Confirmation dialog */
+  .modal{position:fixed;inset:0;z-index:100;background:rgba(26,34,51,.55);display:flex;align-items:center;justify-content:center;padding:16px}
+  .modal-card{background:#fff;border-radius:12px;max-width:460px;width:100%;padding:28px;position:relative;max-height:calc(100vh - 32px);overflow:auto;animation:pop .22s var(--ease)}
+  @keyframes pop{from{opacity:0;transform:translateY(8px) scale(.98)}to{opacity:1;transform:none}}
+  .modal-card h3{font-variation-settings:"wdth" 68;font-weight:800;font-size:30px;line-height:1;margin:0 0 8px;padding-right:32px}
+  .modal-sub{color:var(--steel);margin:0 0 16px}
+  .modal-x{position:absolute;top:14px;right:14px;width:40px;height:40px;border:0;background:none;font-size:28px;cursor:pointer;color:var(--steel);border-radius:50%}
+  .modal-x:hover{background:var(--paper)}
+  .msg-preview{background:var(--paper);border:1px solid var(--line);border-radius:8px;padding:14px;font:14px/1.5 Archivo,sans-serif;white-space:pre-wrap;margin:0 0 16px;max-height:240px;overflow:auto}
+  .modal-card .btn{margin-top:8px}
+  .modal-card .fine{font-size:14px;color:var(--steel);text-align:center;margin:14px 0 0}
+
+  /* One orchestrated entrance: the work order slides in */
+  @media (prefers-reduced-motion:no-preference){
+    .order{animation:slip .7s .1s var(--ease) both}
+    @keyframes slip{from{opacity:0;transform:translateY(24px) rotate(1.2deg)}to{opacity:1;transform:none}}
+  }
+  @media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}*{transition:none !important;animation:none !important}}
 </style>
 </head>
 <body>
 
-<header class="site-header" id="siteHeader"><div class="wrap">
-  <a class="brand" href="#top" aria-label="European Auto Center, back to top">
-    <span class="brand-badge"><img src="images/logo.svg" alt="European Auto Center logo" width="116" height="88"></span>
-    <span class="brand-text">European Auto Center<small>Since 1975 · Fort Worth</small></span>
+<header class="top" id="top-bar"><div class="wrap">
+  <a class="brand" href="#main" aria-label="European Auto Center, back to top">
+    <img src="images/logo.svg" alt="European Auto Center logo" width="64" height="49">
+    <span>European Auto Center<small>Fort Worth since 1975</small></span>
   </a>
-  <nav class="main-nav" aria-label="Main"><ul>
-    <li><a href="#how">How it works</a></li>
-    <li><a href="#pricing">Pricing</a></li>
-    <li><a href="#checks">What we check</a></li>
-    <li><a href="#reviews">Reviews</a></li>
-    <li><a href="#visit">Location</a></li>
-  </ul></nav>
-  <a class="icon-btn call-btn" href="tel:+16825536089" aria-label="Call 682-553-6089"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3.1 19.5 19.5 0 0 1-6-6A19.8 19.8 0 0 1 2.1 4.2 2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7c.1.9.4 1.8.7 2.7a2 2 0 0 1-.5 2.1L8 9.8a16 16 0 0 0 6 6l1.3-1.3a2 2 0 0 1 2.1-.4c.9.3 1.8.6 2.7.7a2 2 0 0 1 1.7 2z"/></svg></a>
-  <a class="btn btn-accent nav-cta" href="#book">Book now</a>
-  <button class="icon-btn" id="menuBtn" type="button" aria-label="Open menu" aria-expanded="false" aria-controls="mobileMenu"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path class="l1" d="M4 7h16"/><path class="l2" d="M4 12h16"/><path class="l3" d="M4 17h16"/></svg></button>
+  <nav class="nav" aria-label="Main">
+    <a href="#how">How it works</a>
+    <a href="#prices">Prices</a>
+    <a href="#visit">Visit</a>
+    <a href="#questions">Questions</a>
+  </nav>
+  <a class="call" href="tel:+16825536089" aria-label="Call 682-553-6089"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3.1 19.5 19.5 0 0 1-6-6A19.8 19.8 0 0 1 2.1 4.2 2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7c.1.9.4 1.8.7 2.7a2 2 0 0 1-.5 2.1L8 9.8a16 16 0 0 0 6 6l1.3-1.3a2 2 0 0 1 2.1-.4c.9.3 1.8.6 2.7.7a2 2 0 0 1 1.7 2z"/></svg></a>
+  <a class="btn btn-ink" href="#book">Book a diagnostic</a>
 </div></header>
 
-<div class="mobile-menu" id="mobileMenu" aria-label="Menu">
-  <a class="mm-link" href="#how">How it works</a>
-  <a class="mm-link" href="#pricing">Pricing</a>
-  <a class="mm-link" href="#checks">What we check</a>
-  <a class="mm-link" href="#report">Your report</a>
-  <a class="mm-link" href="#reviews">Reviews</a>
-  <a class="mm-link" href="#faq">FAQ</a>
-  <a class="mm-link" href="#visit">Location &amp; hours</a>
-  <div class="mm-actions">
-    <a class="btn btn-dark" href="tel:+16825536089">Call</a>
-    <a class="btn btn-accent" href="#book">Book now</a>
-  </div>
-  <p class="mm-info">3129 Alta Mere Dr, Fort Worth · Mon–Fri 8am–6pm · Sat 9:30am–5pm</p>
-</div>
-
-<main id="top">
-<section class="hero" style="padding:0">
+<main id="main">
+<section class="hero" id="book">
   <div class="wrap">
+    <div class="hero-copy">
+      <h1 class="display">European car diagnostics in Fort Worth.</h1>
+      <p class="lede">Find out exactly what's wrong before you pay for repairs. Bring it to our shop, or we come to you.</p>
+    </div>
+    <div class="hero-facts">
+      <ul class="facts">
+        <li><b>$160</b><span>at our shop on Alta Mere Dr</span></li>
+        <li><b>$300</b><span>mobile, anywhere in DFW</span></li>
+        <li><b>Since 1975</b><span>European specialists</span></li>
+        <li><b>4.5 ★</b><span>customer rating</span></li>
+      </ul>
+      <p class="where">
+        <a href="#visit">3129 Alta Mere Dr</a>
+        <a href="tel:+16825536089">682-553-6089</a>
+        <span>Mon–Fri 8–6, Sat 9:30–5</span>
+      </p>
+    </div>
+
+    <div class="order" style="grid-area:order">
+      <div class="order-head">
+        <h2 id="orderTitle">Diagnostic request</h2>
+        <span class="step" id="stepLabel">Step 1 of 2</span>
+      </div>
+      <form id="bookForm" onsubmit="return go(event)" novalidate>
+        <div id="step1">
+          <fieldset class="svc">
+            <legend>Where should we check it?</legend>
+            <input type="radio" name="svc2" id="b-shop" value="shop" checked>
+            <label for="b-shop"><b>At our shop <em>$160</em></b><small>Drop it off on Alta Mere Dr</small></label>
+            <input type="radio" name="svc2" id="b-mobile" value="mobile">
+            <label for="b-mobile"><b>We come to you <em>$300</em></b><small>Home, work or a seller</small></label>
+          </fieldset>
+          <div class="field">
+            <label class="lbl" for="vin">Your vehicle <i>(VIN fills it in for you)</i></label>
+            <input id="vin" placeholder="17-character VIN, optional" maxlength="17" autocomplete="off" spellcheck="false" autocapitalize="characters">
+            <div class="vin-msg" id="vin-msg" aria-live="polite"></div>
+          </div>
+          <div class="or">or pick it</div>
+          <div class="vehicle" data-vehicle data-vin="vin"></div>
+          <div class="field">
+            <label class="lbl" for="freason">What do you need?</label>
+            <select id="freason" required>
+              <option value="" disabled selected>Choose one</option>
+              <option>Check engine / warning light</option>
+              <option>Pre-purchase inspection</option>
+              <option>Won't start</option>
+              <option>Noise or vibration</option>
+              <option>Electrical problem</option>
+              <option>Something else</option>
+            </select>
+          </div>
+          <button class="btn btn-ink btn-block" type="button" id="toStep2">Continue</button>
+          <p class="fine">No payment until the diagnostic is done.</p>
+        </div>
+
+        <div id="step2" hidden>
+          <button class="back" type="button" id="toStep1">Change vehicle or service</button>
+          <div class="summary" id="summary"></div>
+          <div class="two">
+            <div class="field"><label class="lbl" for="fname">Your name</label><input id="fname" autocomplete="name" required></div>
+            <div class="field"><label class="lbl" for="fphone">Mobile number</label><input id="fphone" type="tel" inputmode="tel" autocomplete="tel" placeholder="(817) 555-0123" required></div>
+          </div>
+          <div class="field" id="addr-row" hidden><label class="lbl" for="addr">Where should we meet you?</label><input id="addr" autocomplete="street-address" placeholder="Street address, city"></div>
+          <div class="two">
+            <div class="field"><label class="lbl" for="pdate">Preferred day <i>(optional)</i></label><input type="date" id="pdate" title="We're closed Sundays"></div>
+            <div class="field"><label class="lbl" for="femail">Email <i>(optional)</i></label><input id="femail" type="email" autocomplete="email"></div>
+          </div>
+          <div class="field"><label class="lbl" for="fnotes">What's it doing? <i>(optional)</i></label><textarea id="fnotes" rows="3" placeholder="Warning lights, noises, when it happens"></textarea></div>
+          <input type="text" name="_honey" id="fhoney" tabindex="-1" autocomplete="off" aria-hidden="true" style="position:absolute;left:-9999px;width:1px;height:1px;opacity:0">
+          <button class="btn btn-ink btn-block" type="submit" id="bookSubmit">Send request</button>
+          <p class="fine">We'll call or text to confirm your time. Rather talk? <a href="tel:+16825536089">682-553-6089</a></p>
+        </div>
+      </form>
+    </div>
+  </div>
+</section>
+
+<section class="sec white" id="how">
+  <div class="wrap">
+    <div class="sec-head">
+      <h2 class="display">How a diagnostic works</h2>
+      <p class="intro">A warning light, a strange noise, or a car you're about to buy. Here's what happens after you book.</p>
+    </div>
+    <ol class="process">
+      <li><h3>You book</h3><p>Pick the shop or a mobile visit and tell us about the car. We confirm a time by phone or text.</p></li>
+      <li><h3>We test it</h3><p>Every control module scanned, live data read, a road test and a hands-on inspection.</p></li>
+      <li><h3>You get the report</h3><p>Fault codes, findings and photos, explained in plain English.</p></li>
+      <li><h3>You decide</h3><p>An itemized estimate. Fix it with us or take the report anywhere.</p></li>
+    </ol>
+  </div>
+</section>
+
+<section class="sec" id="checks">
+  <div class="wrap">
+    <div class="sec-head">
+      <h2 class="display">What we check</h2>
+      <p class="intro">A generic code reader sees a fraction of a European car. We use tools built for it.</p>
+    </div>
+    <div class="checks">
+      <div><h3>All control modules</h3><p>Stored and history codes from every module, not just the engine.</p></div>
+      <div><h3>Engine and drivetrain</h3><p>Misfires, timing, turbo, oil leaks, cooling, transmission behavior.</p></div>
+      <div><h3>Brakes and suspension</h3><p>Pads, rotors, control arms, bushings, shocks and air suspension.</p></div>
+      <div><h3>Electrical</h3><p>Battery and charging, parasitic draw, lighting and comfort electronics.</p></div>
+      <div><h3>Safety systems</h3><p>Airbags, ABS, stability control and driver-assist warnings.</p></div>
+      <div><h3>Road test</h3><p>Noises, vibrations, shifting, steering and how the car drives.</p></div>
+    </div>
+  </div>
+</section>
+
+<section class="sec white" id="report">
+  <div class="wrap report">
     <div>
-      <span class="eyebrow">European vehicle specialists</span>
-      <h1>Know exactly what's wrong <span>before you pay</span> for repairs.</h1>
-      <p class="lead">Dealer-level diagnostics for Mercedes-Benz, BMW, Porsche, Audi, Jaguar, Range Rover and Rolls-Royce, at 30–40% less than the dealership. Bring it to our Fort Worth shop, or we'll come to your home, office, or the seller's driveway.</p>
-      <div class="hero-ctas">
-        <a href="#book" class="btn btn-accent">Book a diagnostic</a>
-        <a href="#pricing" class="btn btn-ghost">See pricing</a>
-      </div>
-      <div class="hero-points">
-        <div>Factory-level scan tools</div>
-        <div>Written report with photos</div>
-        <div>Pre-purchase inspections</div>
-      </div>
-      <div class="hero-contact">
-        <span><span class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 21s-7-6.2-7-11.5A7 7 0 0 1 19 9.5C19 14.8 12 21 12 21z"/><circle cx="12" cy="9.5" r="2.5"/></svg></span><a href="#visit">3129 Alta Mere Dr, Fort Worth</a></span>
-        <span><span class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3.1 19.5 19.5 0 0 1-6-6A19.8 19.8 0 0 1 2.1 4.2 2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7c.1.9.4 1.8.7 2.7a2 2 0 0 1-.5 2.1L8 9.8a16 16 0 0 0 6 6l1.3-1.3a2 2 0 0 1 2.1-.4c.9.3 1.8.6 2.7.7a2 2 0 0 1 1.7 2z"/></svg></span><a href="tel:+16825536089">682-553-6089</a></span>
-        <span><span class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg></span>Mon–Fri 8–6 · Sat 9:30–5</span>
-      </div>
+      <h2 class="display">A report you can actually read</h2>
+      <p class="intro">Sent to your phone and email the same day. Use it to plan repairs, negotiate a price, or get a second opinion.</p>
+      <ul>
+        <li>Each finding marked good, watch or fix now</li>
+        <li>Fault codes with plain-English explanations</li>
+        <li>Photos of anything we find</li>
+        <li>An itemized repair estimate</li>
+      </ul>
+      <a class="btn btn-ink" href="#book">Book a diagnostic</a>
     </div>
-
-    <aside class="svc-card" aria-label="Choose a service">
-      <h3>Choose your diagnostic</h3>
-      <p>Flat price. You pay only once the diagnostic is done.</p>
-      <a class="svc-opt" href="#book" data-svc="shop">
-        <span class="svc-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 21h18M4 21V9l8-5 8 5v12"/><path d="M9 21v-6h6v6"/></svg></span>
-        <span class="svc-txt"><b>In-shop diagnostic</b><small>Drop off at 3129 Alta Mere Dr</small></span>
-        <span class="svc-price">$160</span>
-        <span class="svc-go"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span>
-      </a>
-      <a class="svc-opt" href="#book" data-svc="mobile">
-        <span class="svc-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 16V7a1 1 0 0 1 1-1h10v10M14 9h4l3 4v3h-7"/><circle cx="7.5" cy="17" r="2"/><circle cx="17.5" cy="17" r="2"/></svg></span>
-        <span class="svc-txt"><b>Mobile diagnostic</b><small>We come to your home, work or a seller</small></span>
-        <span class="svc-price">$300</span>
-        <span class="svc-go"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span>
-      </a>
-      <div class="svc-foot"><span class="stars">★★★★★</span> 4.5 customer rating · Serving DFW since 1975</div>
-    </aside>
+    <article class="sheet" aria-label="Example diagnostic report">
+      <header>
+        <div><b>Diagnostic report</b><small>Example: 2018 BMW 530i, 62,410 miles</small></div>
+        <img src="images/logo.svg" alt="" width="72" height="55">
+      </header>
+      <div class="row"><div>Engine performance<small>No active faults</small></div><span class="tag t-ok">Good</span></div>
+      <div class="row"><div>Valve cover gasket<small>Minor seepage at rear</small></div><span class="tag t-watch">Watch</span></div>
+      <div class="row"><div>Front control arm bushings<small>Cracked, play on road test</small></div><span class="tag t-fix">Fix now</span></div>
+      <div class="row"><div>Battery and charging<small>12.6 V, registration OK</small></div><span class="tag t-ok">Good</span></div>
+      <div class="row"><div>Rear brake pads<small>About 3 mm left</small></div><span class="tag t-watch">Watch</span></div>
+    </article>
   </div>
 </section>
 
-<div class="strip"><div class="wrap">
-  <div><b>Since 1975</b><span>European specialists in Fort Worth</span></div>
-  <div><b>4.5 ★</b><span>Customer rating</span></div>
-  <div><b>30–40% less</b><span>Than dealership pricing</span></div>
-  <div><b>All of DFW</b><span>Mobile diagnostics at your door</span></div>
-</div></div>
-
-<section id="how">
+<section class="sec" id="prices">
   <div class="wrap">
-    <div class="sec-head"><div class="k">How it works</div><h2>Straight answers in four simple steps</h2><p>Whether it's a warning light, a strange noise, or a car you're thinking of buying, our technicians find out what's actually going on.</p></div>
-    <div class="steps">
-      <div class="step"><div class="n">1</div><h4>Book online</h4><p>Choose in-shop or mobile, tell us about the vehicle and the symptoms.</p></div>
-      <div class="step"><div class="n">2</div><h4>We diagnose</h4><p>Full computer scan of all modules, live data review, road test and hands-on inspection.</p></div>
-      <div class="step"><div class="n">3</div><h4>Get your report</h4><p>Fault codes, findings, photos and a clear explanation — in plain English.</p></div>
-      <div class="step"><div class="n">4</div><h4>Decide with confidence</h4><p>Get an itemized repair estimate. Fix it with us, or take the report anywhere.</p></div>
+    <div class="sec-head">
+      <h2 class="display">Two flat prices</h2>
+      <p class="intro">You know the price before we start. No payment until the diagnostic is done.</p>
     </div>
-  </div>
-</section>
-
-<section id="pricing" class="alt">
-  <div class="wrap">
-    <div class="sec-head"><div class="k">Pricing</div><h2>Simple, flat-rate diagnostics</h2><p>No surprise fees. You'll know the price before we start.</p></div>
-    <div class="plans">
-      <div class="plan">
-        <h3>In-Shop Diagnostic</h3>
-        <p class="sub">Bring your vehicle to our shop</p>
-        <div class="price">$160 <small>/ vehicle</small></div>
+    <div class="prices">
+      <div class="price">
+        <h3>At our shop</h3>
+        <p class="for">Drop it off at 3129 Alta Mere Dr</p>
+        <div class="amt">$160</div>
         <ul>
-          <li>Full system scan — engine, transmission, ABS, SRS, body &amp; comfort modules</li>
-          <li>Live data &amp; sensor analysis</li>
-          <li>Road test by a European specialist</li>
-          <li>Lift inspection: leaks, suspension, brakes, underbody</li>
+          <li>Full scan of every module</li>
+          <li>Live data and road test</li>
+          <li>Lift inspection of the underside</li>
           <li>Written report with photos</li>
           <li>Itemized repair estimate</li>
         </ul>
-        <a href="#book" class="btn btn-dark btn-block" data-svc="shop">Book in-shop — $160</a>
+        <a class="btn btn-ink btn-block" href="#book" data-svc="shop">Book at the shop</a>
       </div>
-      <div class="plan feat">
-        <span class="badge">Most convenient</span>
-        <h3>Mobile Diagnostic</h3>
-        <p class="sub">We come to your home, work, or a seller</p>
-        <div class="price">$300 <small>/ vehicle</small></div>
+      <div class="price mobile">
+        <h3>We come to you</h3>
+        <p class="for">Home, work, or the seller's driveway</p>
+        <div class="amt">$300</div>
         <ul>
-          <li>Everything in the in-shop diagnostic*</li>
-          <li>Technician travels to your location</li>
-          <li>Ideal for cars that won't start or aren't safe to drive</li>
-          <li>Pre-purchase inspections at a dealer or private seller</li>
-          <li>Report sent to your phone &amp; email same day</li>
+          <li>Everything in the shop diagnostic*</li>
+          <li>For cars that won't start or aren't safe to drive</li>
+          <li>Pre-purchase checks at a dealer or private seller</li>
+          <li>Report sent the same day</li>
+          <li>Anywhere in Dallas–Fort Worth</li>
         </ul>
-        <a href="#book" class="btn btn-accent btn-block" data-svc="mobile">Book mobile — $300</a>
+        <a class="btn btn-block" href="#book" data-svc="mobile">Book a mobile visit</a>
       </div>
     </div>
-    <p style="text-align:center;color:var(--muted);font-size:13.5px;margin-top:22px">*Lift inspection is limited on mobile visits. Mobile service area: Dallas–Fort Worth metroplex.</p>
+    <p class="note">*The underside inspection is limited away from the lift.</p>
   </div>
 </section>
 
-<section id="checks">
+<section class="sec white" id="brands">
   <div class="wrap">
-    <div class="sec-head"><div class="k">What we check</div><h2>A complete look at your vehicle</h2><p>European cars are complex. A generic code reader misses most of it — we use tools built for your car.</p></div>
-    <div class="checks">
-      <div class="check"><div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="6" y="6" width="12" height="12" rx="2"/><rect x="9.5" y="9.5" width="5" height="5"/><path d="M9 2v4M15 2v4M9 18v4M15 18v4M2 9h4M2 15h4M18 9h4M18 15h4"/></svg></div><h4>All control modules</h4><p>Fault codes from every module, not just the engine — including stored and history codes.</p></div>
-      <div class="check"><div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></svg></div><h4>Engine &amp; drivetrain</h4><p>Misfires, timing, turbo, oil leaks, cooling system, transmission behaviour.</p></div>
-      <div class="check"><div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="3"/><path d="M12 3v3M12 18v3M3 12h3M18 12h3"/></svg></div><h4>Brakes &amp; suspension</h4><p>Pads, rotors, control arms, bushings, shocks, air suspension systems.</p></div>
-      <div class="check"><div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M13 2 4 14h7l-1 8 9-12h-7l1-8z"/></svg></div><h4>Electrical</h4><p>Battery &amp; charging, parasitic draw, lighting, infotainment and comfort electronics.</p></div>
-      <div class="check"><div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="m9 12 2 2 4-4"/></svg></div><h4>Safety systems</h4><p>Airbags/SRS, ABS, stability control and driver assistance warnings.</p></div>
-      <div class="check"><div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 20 8 4M20 20 16 4M12 6v2M12 11v2M12 16v2"/></svg></div><h4>Road test</h4><p>Noises, vibrations, shifting, steering and how the car actually drives.</p></div>
-    </div>
+    <ul class="brands" aria-label="Makes we work on">
+      <li>Mercedes-Benz</li><li>BMW</li><li>Porsche</li><li>Audi</li><li>Jaguar</li><li>Range Rover</li><li>Rolls-Royce</li><li>Volvo</li><li>Ferrari</li><li>Lamborghini</li><li>Lotus</li>
+    </ul>
+    <p class="brands-note">And any other European car. Fifty years of them on Alta Mere Drive.</p>
   </div>
 </section>
 
-<section id="report" class="alt">
-  <div class="wrap report">
-    <div>
-      <div class="sec-head" style="text-align:left;margin:0 0 6px"><div class="k">Your report</div></div>
-      <h2>A clear report you can actually understand</h2>
-      <p>Every diagnostic ends with a written report sent to your phone and email. Use it to plan repairs, negotiate a purchase price, or get a second opinion.</p>
-      <ul>
-        <li>Color-coded findings: good, monitor, repair now</li>
-        <li>Fault codes with plain-English explanations</li>
-        <li>Photos of anything we find</li>
-        <li>Itemized repair estimate</li>
-      </ul>
-      <a href="#book" class="btn btn-dark" style="margin-top:10px">Get your car checked</a>
-    </div>
-    <div class="mock" aria-label="Example report">
-      <div class="mock-h"><div><b>Diagnostic Report</b><br>2018 BMW 530i · 62,410 mi</div><div style="text-align:right">Example<br>report</div></div>
-      <div class="mock-b">
-        <div class="mrow"><div>Engine performance<div class="code">No active faults</div></div><span class="pill p-ok">Good</span></div>
-        <div class="mrow"><div>Valve cover gasket<div class="code">Minor seepage at rear</div></div><span class="pill p-warn">Monitor</span></div>
-        <div class="mrow"><div>Front control arm bushings<div class="code">Cracked, play on road test</div></div><span class="pill p-bad">Repair</span></div>
-        <div class="mrow"><div>Battery &amp; charging<div class="code">12.6V · registration OK</div></div><span class="pill p-ok">Good</span></div>
-        <div class="mrow"><div>Transmission<div class="code">Shift quality normal</div></div><span class="pill p-ok">Good</span></div>
-        <div class="mrow"><div>Brake pads (rear)<div class="code">~3mm remaining</div></div><span class="pill p-warn">Monitor</span></div>
-      </div>
-    </div>
-  </div>
-</section>
-
-<section>
+<section class="sec" id="visit">
   <div class="wrap">
-    <div class="sec-head"><div class="k">Specialists in</div><h2>The brands we know best</h2></div>
-    <div class="brands">
-      <span>Mercedes-Benz</span><span>BMW</span><span>Porsche</span><span>Audi</span><span>Jaguar</span><span>Range Rover</span><span>Rolls-Royce</span><span>Volvo</span><span>Lexus</span><span>Lotus</span><span>Lamborghini</span><span>Ferrari</span><span>Any European</span>
+    <div class="sec-head">
+      <h2 class="display">Visit the shop</h2>
+      <p class="intro">Two locations on the west side of Fort Worth.</p>
     </div>
-  </div>
-</section>
-
-<section id="reviews">
-  <div class="wrap">
-    <div class="sec-head"><div class="k">Reviews</div><h2>What our customers say</h2></div>
-    <div class="rating-big"><b>4.5</b><span class="stars">★★★★★</span><span style="color:var(--muted)">Average customer rating</span></div>
-    <p style="text-align:center;color:var(--muted);max-width:560px;margin:0 auto">Thousands of European cars serviced since 1975. See what Fort Worth drivers say about us on Google.</p>
-    <p style="text-align:center;margin-top:26px"><a class="btn btn-dark" href="https://www.google.com/maps/search/?api=1&query=European+Auto+Center+3129+Alta+Mere+Dr+Fort+Worth+TX+76116" target="_blank" rel="noopener">Read our reviews on Google</a></p>
-  </div>
-</section>
-
-<section id="faq" class="alt">
-  <div class="wrap">
-    <div class="sec-head"><div class="k">FAQ</div><h2>Common questions</h2></div>
-    <div class="faq">
-      <details open><summary>What's the difference between in-shop and mobile?</summary><p>Both include a full computer scan, live data, road test and written report. In-shop ($160) adds a full lift inspection of the underside. Mobile ($300) means we come to you — great for cars that won't start, busy schedules, or inspecting a car before you buy it.</p></details>
-      <details><summary>Can you inspect a car I'm thinking of buying?</summary><p>Yes. Book a mobile diagnostic and we'll meet the vehicle at the dealer or private seller. You'll get a report before you hand over any money.</p></details>
-      <details><summary>How long does a diagnostic take?</summary><p>Most diagnostics take 1–2 hours. Intermittent electrical problems can take longer — we'll call you before going beyond the quoted price.</p></details>
-      <details><summary>Do I have to get the repairs done with you?</summary><p>No. The report is yours to keep. If you do choose us, we'll give you an itemized estimate before any work begins.</p></details>
-      <details><summary>What areas do you cover for mobile service?</summary><p>We cover the Dallas–Fort Worth metroplex. Call or text <a href="tel:+16825536089">682-553-6089</a> if you're not sure we reach you. Need a tow instead? We also run a 24/7 wrecker service.</p></details>
-    </div>
-  </div>
-</section>
-
-<section id="book">
-  <div class="wrap" style="max-width:720px">
-    <div class="sec-head"><div class="k">Book</div><h2>Book your diagnostic</h2><p>Takes about a minute. We'll call or text to confirm your time. No payment until the diagnostic is done.</p></div>
-    <form class="quote-card" style="box-shadow:var(--shadow);border:1px solid var(--line)" onsubmit="return go(event)">
-      <div class="seg">
-        <input type="radio" name="svc2" id="b-shop" value="shop" checked>
-        <label for="b-shop"><div class="t">At our shop</div><div class="p">$160</div><div class="s">Drop off at our location</div></label>
-        <input type="radio" name="svc2" id="b-mobile" value="mobile">
-        <label for="b-mobile"><div class="t">Mobile</div><div class="p">$300</div><div class="s">We come to you</div></label>
-      </div>
-      <div class="row2">
-        <div class="field"><label class="lbl" for="fname">Your name</label><input id="fname" placeholder="First and last name" autocomplete="name" required></div>
-        <div class="field"><label class="lbl" for="fphone">Mobile number</label><input id="fphone" type="tel" placeholder="(817) 555-0123" autocomplete="tel" inputmode="tel" required></div>
-      </div>
-      <div class="row2">
-        <div class="field"><label class="lbl" for="femail">Email (optional)</label><input id="femail" type="email" placeholder="you@example.com" autocomplete="email"></div>
-        <div class="field"><label class="lbl" for="pdate">Preferred date (optional)</label><input type="date" id="pdate" title="Closed Sundays"></div>
-      </div>
-      <div class="field vin-row">
-        <label class="lbl" for="vin">Vehicle <span style="font-weight:500">— enter your VIN to fill it in automatically, or pick below</span></label>
-        <input id="vin" placeholder="VIN (optional, 17 characters)" maxlength="17" autocomplete="off" spellcheck="false" autocapitalize="characters">
-        <div class="vin-msg" id="vin-msg" aria-live="polite"></div>
-      </div>
-      <div class="vehicle" data-vehicle data-vin="vin"></div>
-      <div class="field" id="addr-row" hidden><label class="lbl" for="addr">Where should we meet you?</label><input id="addr" placeholder="Street address, city" autocomplete="street-address"></div>
-      <div class="field"><label class="lbl" for="freason">What do you need?</label><select id="freason" required>
-        <option value="" disabled selected>Choose one</option>
-        <option>Check engine / warning light</option>
-        <option>Pre-purchase inspection</option>
-        <option>Won't start</option>
-        <option>Noise or vibration</option>
-        <option>Electrical problem</option>
-        <option>Other</option>
-      </select></div>
-      <div class="field"><textarea id="fnotes" rows="3" placeholder="Describe the problem (optional): warning lights, noises, when it happens…"></textarea></div>
-      <input type="text" name="_honey" id="fhoney" tabindex="-1" autocomplete="off" aria-hidden="true" style="position:absolute;left:-9999px;width:1px;height:1px;opacity:0">
-      <button class="btn btn-accent btn-block" type="submit" id="bookSubmit">Request appointment →</button>
-      <div class="fine">Your request goes straight to our team. Prefer to talk? Call or text <a href="tel:+16825536089">682-553-6089</a></div>
-    </form>
-  </div>
-</section>
-
-<section id="visit">
-  <div class="wrap">
-    <div class="sec-head"><div class="k">Visit us</div><h2>Find us in Fort Worth</h2><p>Two locations on the west side of Fort Worth.</p></div>
     <div class="visit">
       <div class="visit-card">
         <h3>European Auto Center</h3>
-        <p class="muted">3129 Alta Mere Drive, Fort Worth, TX 76116</p>
+        <p>3129 Alta Mere Drive, Fort Worth, TX 76116</p>
         <table class="hours" aria-label="Opening hours">
-          <tr><td>Monday – Friday</td><td>8:00 am – 6:00 pm</td></tr>
+          <tr><td>Monday to Friday</td><td>8:00 am – 6:00 pm</td></tr>
           <tr><td>Saturday</td><td>9:30 am – 5:00 pm</td></tr>
           <tr><td>Sunday</td><td>Closed</td></tr>
         </table>
-        <div class="visit-actions">
-          <a class="btn btn-dark" href="https://www.google.com/maps/dir/?api=1&destination=European+Auto+Center+3129+Alta+Mere+Dr+Fort+Worth+TX+76116" target="_blank" rel="noopener">Directions</a>
-          <a class="btn btn-accent" href="tel:+16825536089">Call us</a>
+        <div class="acts">
+          <a class="btn btn-ink" href="https://www.google.com/maps/dir/?api=1&destination=European+Auto+Center+3129+Alta+Mere+Dr+Fort+Worth+TX+76116" target="_blank" rel="noopener">Get directions</a>
+          <a class="btn btn-line" href="tel:+16825536089">Call the shop</a>
         </div>
-        <p class="visit-alt">Second location: 11300 White Settlement Rd, Fort Worth, TX 76108</p>
+        <p class="second">Also at 11300 White Settlement Rd, Fort Worth, TX 76108</p>
       </div>
-      <div class="map"><iframe title="Map to European Auto Center" src="https://maps.google.com/maps?q=European%20Auto%20Center%2C%203129%20Alta%20Mere%20Dr%2C%20Fort%20Worth%2C%20TX%2076116&z=15&output=embed" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe></div>
+      <div class="map"><iframe title="Map showing European Auto Center" src="https://maps.google.com/maps?q=European%20Auto%20Center%2C%203129%20Alta%20Mere%20Dr%2C%20Fort%20Worth%2C%20TX%2076116&z=15&output=embed" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe></div>
     </div>
   </div>
 </section>
 
-<section class="cta">
+<section class="sec white" id="questions">
   <div class="wrap">
-    <h2>Stop guessing. Get it diagnosed.</h2>
-    <p>$160 at our shop · $300 at your location</p>
-    <a href="#book" class="btn btn-accent">Book a diagnostic</a>
+    <div class="sec-head"><h2 class="display">Questions</h2></div>
+    <div class="faq">
+      <details><summary>What's the difference between the shop and a mobile visit?</summary><p>Both include a full scan, live data, a road test and a written report. At the shop ($160) we also put the car on a lift. A mobile visit ($300) brings us to you, which suits cars that won't start, busy days, or checking a car before you buy it.</p></details>
+      <details><summary>Can you check a car I'm thinking of buying?</summary><p>Yes. Book a mobile visit and we'll meet the car at the dealer or private seller. You'll have the report before any money changes hands.</p></details>
+      <details><summary>How long does it take?</summary><p>Most diagnostics take one to two hours. Intermittent electrical faults can take longer, and we'll call you before going past the quoted price.</p></details>
+      <details><summary>Do I have to get the repairs done with you?</summary><p>No. The report is yours. If you choose us, you'll get an itemized estimate before any work starts.</p></details>
+      <details><summary>How far do you travel?</summary><p>Anywhere in Dallas–Fort Worth. Not sure we reach you? Call or text <a href="tel:+16825536089">682-553-6089</a>. Need a tow instead? We run a 24/7 wrecker service.</p></details>
+    </div>
+  </div>
+</section>
+
+<section class="close">
+  <div class="wrap">
+    <h2 class="display">Know what's wrong before you pay.</h2>
+    <div class="btns">
+      <a class="btn btn-ink" href="#book">Book a diagnostic</a>
+      <a class="btn btn-line" href="tel:+16825536089">Call 682-553-6089</a>
+    </div>
   </div>
 </section>
 </main>
 
 <footer><div class="wrap">
   <div class="cols">
-    <div><div class="logo-badge" style="width:170px;margin-bottom:14px"><img src="images/logo.svg" alt="European Auto Center logo" width="150" height="114"></div><p>Diagnostics, repair, parts, sales and pre-purchase inspections for European vehicles. Serving the metroplex since 1975. Courtesy transportation available.</p></div>
-    <div><h5>Locations</h5><p>3129 Alta Mere Drive<br>Fort Worth, TX 76116<br><br>11300 White Settlement Rd<br>Fort Worth, TX 76108<br><br>Mon–Fri 8am–6pm<br>Sat 9:30am–5pm · Sun closed<br><a href="https://www.google.com/maps/search/?api=1&query=European+Auto+Center+3129+Alta+Mere+Dr+Fort+Worth+TX+76116" target="_blank" rel="noopener">Get directions →</a></p></div>
-    <div><h5>Contact</h5><p>Call or text <a href="tel:+16825536089">682-553-6089</a><br>Also text <a href="sms:+18177138060">817-713-8060</a><br><a href="mailto:ziad@theautoplace.com">ziad@theautoplace.com</a><br>24/7 wrecker service<br><a href="https://theautoplace.com">Vehicle inventory →</a></p></div>
+    <div><img class="badge" src="images/logo.svg" alt="European Auto Center logo" width="140" height="107"><p>Diagnostics, repair, parts and sales for European cars. Serving Fort Worth since 1975, with courtesy transportation and a 24/7 wrecker service.</p></div>
+    <div><h3>Locations</h3><p>3129 Alta Mere Drive<br>Fort Worth, TX 76116</p><p style="margin-top:12px">11300 White Settlement Rd<br>Fort Worth, TX 76108</p></div>
+    <div><h3>Contact</h3><p>Call or text <a href="tel:+16825536089">682-553-6089</a><br>Text <a href="sms:+18177138060">817-713-8060</a><br><a href="mailto:ziad@theautoplace.com">ziad@theautoplace.com</a><br><a href="https://theautoplace.com">Cars for sale</a></p></div>
   </div>
-  <div class="copy"><span>© 2026 European Auto Center</span><span>Sample design — draft for review</span></div>
+  <div class="legal"><span>© 2026 European Auto Center</span><span>Sample design for review</span></div>
 </div></footer>
 
 <div class="modal" id="sendModal" hidden role="dialog" aria-modal="true" aria-labelledby="sendTitle">
   <div class="modal-card">
     <button class="modal-x" type="button" aria-label="Close" onclick="closeSend()">×</button>
-    <h3 id="sendTitle">Almost done: send your request</h3>
-    <p class="modal-sub" id="sendSub">Tap the button to open your messages with everything filled in, then press <b>Send</b>.</p>
+    <h3 id="sendTitle">Sending your request</h3>
+    <p class="modal-sub" id="sendSub"></p>
     <pre class="msg-preview" id="msgPreview"></pre>
-    <a class="btn btn-accent btn-block" id="smsBtn" href="#">💬 Open text message</a>
-    <button class="btn btn-block btn-outline" type="button" id="copyBtn">Copy details</button>
-    <button class="btn btn-block btn-dark" type="button" id="doneBtn" onclick="closeSend()" hidden>Done</button>
-    <p class="fine" id="sendAlt">Prefer to talk? Call <a href="tel:+16825536089">682-553-6089</a>.</p>
+    <a class="btn btn-ink btn-block" id="smsBtn" href="#">Open text message</a>
+    <button class="btn btn-line btn-block" type="button" id="copyBtn">Copy details</button>
+    <button class="btn btn-ink btn-block" type="button" id="doneBtn" onclick="closeSend()" hidden>Done</button>
+    <p class="fine" id="sendAlt">Rather talk? Call <a href="tel:+16825536089">682-553-6089</a>.</p>
   </div>
 </div>
 
 <script>
+
   var SHOP_SMS='+16825536089';
   // Booking requests are emailed here (via FormSubmit). Change this one line to send them elsewhere.
   var SHOP_EMAIL='ziad@theautoplace.com';
@@ -789,27 +719,38 @@
     a.addEventListener('click',function(){window.pick(a.getAttribute('data-svc'));setTimeout(function(){try{document.getElementById('fname').focus({preventScroll:true});}catch(e){}},600);});
   });
 
-  // ---------- Header: tall & transparent at the top, compact glass bar after scrolling ----------
+
+  // Two-step work order
   (function(){
-    var h=document.getElementById('siteHeader'),btn=document.getElementById('menuBtn'),menu=document.getElementById('mobileMenu');
-    var compact=false,ticking=false;
-    function update(){
-      ticking=false;var y=window.scrollY;
-      if(!compact&&y>56){compact=true;h.classList.add('compact');}
-      else if(compact&&y<12){compact=false;h.classList.remove('compact');}
+    var s1=document.getElementById('step1'),s2=document.getElementById('step2'),lab=document.getElementById('stepLabel'),sum=document.getElementById('summary');
+    function vehicleText(){
+      var s=s1.querySelectorAll('[data-vehicle] select'),o=s1.querySelector('[data-vehicle] input');
+      var y=s[0].value==='older'?'Pre-1950':s[0].value,m=s[1].value==='__other'?'':s[1].value,md=(s[2].value==='__other'||s[1].value==='__other')?o.value.trim():s[2].value;
+      return [y,m,md].filter(Boolean).join(' ');
     }
-    window.addEventListener('scroll',function(){if(!ticking){ticking=true;requestAnimationFrame(update);}},{passive:true});
-    update();
-    function setMenu(open){
-      document.documentElement.classList.toggle('menu-open',open);
-      menu.classList.toggle('open',open);
-      btn.setAttribute('aria-expanded',open);btn.setAttribute('aria-label',open?'Close menu':'Open menu');
-    }
-    btn.addEventListener('click',function(){setMenu(!menu.classList.contains('open'));});
-    menu.querySelectorAll('a').forEach(function(a){a.addEventListener('click',function(){setMenu(false);});});
-    document.addEventListener('keydown',function(e){if(e.key==='Escape')setMenu(false);});
-    window.addEventListener('resize',function(){if(window.innerWidth>1060)setMenu(false);});
+    document.getElementById('toStep2').addEventListener('click',function(){
+      var req=s1.querySelectorAll('select[required],input[required]');
+      for(var i=0;i<req.length;i++){ if(!req[i].checkValidity()){ req[i].reportValidity(); req[i].focus(); return; } }
+      var mobile=document.getElementById('b-mobile').checked;
+      sum.textContent=(mobile?'Mobile visit, $300':'At our shop, $160')+'. '+vehicleText()+'. '+document.getElementById('freason').value+'.';
+      s1.hidden=true;s2.hidden=false;lab.textContent='Step 2 of 2';
+      document.getElementById('fname').focus();
+    });
+    document.getElementById('toStep1').addEventListener('click',function(){s2.hidden=true;s1.hidden=false;lab.textContent='Step 1 of 2';});
+    // Validate step 2 before the send handler runs
+    var form=document.getElementById('bookForm'),orig=window.go;
+    window.go=function(e){
+      e.preventDefault();
+      var req=s2.querySelectorAll('[required]');
+      for(var i=0;i<req.length;i++){ if(!req[i].checkValidity()){ req[i].reportValidity(); req[i].focus(); return false; } }
+      return orig(e);
+    };
+    form.onsubmit=function(e){return window.go(e);};
+    // Price buttons: choose the service and return to step 1 of the order
+    document.querySelectorAll('[data-svc]').forEach(function(a){a.addEventListener('click',function(){s2.hidden=true;s1.hidden=false;lab.textContent='Step 1 of 2';});});
   })();
+  // Header hairline once the page scrolls
+  (function(){var h=document.getElementById('top-bar');function u(){h.classList.toggle('scrolled',window.scrollY>8);}window.addEventListener('scroll',u,{passive:true});u();})();
 </script>
 </body>
 </html>
