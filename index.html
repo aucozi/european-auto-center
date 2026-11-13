@@ -89,6 +89,11 @@
   .field input:focus,.field select:focus,.field textarea:focus{outline:none;border-color:var(--ink);box-shadow:0 0 0 3px rgba(26,34,51,.18)}
   .field input::placeholder,.field textarea::placeholder{color:#8b8456}
   .field textarea{min-height:84px;resize:vertical}
+  .field,.two>*,.vehicle>*{min-width:0}
+  .field input[type=date]{-webkit-appearance:none;appearance:none;display:block;min-width:0;max-width:100%;text-align:left}
+  .field input[type=date]::-webkit-date-and-time-value{text-align:left}
+  .field [aria-invalid=true]{border-color:var(--signal);box-shadow:0 0 0 3px rgba(179,38,30,.15)}
+  .err{margin:6px 0 0;color:var(--signal);font-size:14px;font-weight:600}
   .field select{appearance:none;-webkit-appearance:none;background-image:linear-gradient(45deg,transparent 50%,var(--ink) 50%),linear-gradient(135deg,var(--ink) 50%,transparent 50%);background-position:calc(100% - 19px) 52%,calc(100% - 14px) 52%;background-size:5px 5px;background-repeat:no-repeat;padding-right:36px}
   .field select:disabled{opacity:.55}
   .two{display:grid;grid-template-columns:1fr 1fr;gap:0 12px}
@@ -98,7 +103,7 @@
   .svc legend{font-weight:600;font-size:14px;margin-bottom:6px;padding:0}
   .svc input{position:absolute;opacity:0;pointer-events:none}
   .svc label{display:block;cursor:pointer;background:#fffdf3;border:1.5px solid rgba(26,34,51,.28);border-radius:8px;padding:12px 14px;transition:border-color .15s,background-color .15s}
-  .svc label b{display:flex;justify-content:space-between;align-items:baseline;font-size:16px}
+  .svc label b{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:baseline;gap:2px 12px;font-size:16px;line-height:1.2}
   .svc label b em{font-style:normal;font-variation-settings:"wdth" 68;font-size:26px;font-weight:800}
   .svc label small{display:block;color:#5a5320;font-size:13.5px;margin-top:2px}
   .svc input:checked+label{background:var(--ink);border-color:var(--ink);color:#fff}
@@ -715,7 +720,7 @@
         trim.appendChild(opt('','Choose the version'));list.forEach(function(n){trim.appendChild(opt(n))});
         trim.appendChild(opt('__other','Other version…'));trim.appendChild(opt('__unsure','Not sure'));
         fTrimTxt.hidden=true;trimTxt.required=false;
-        if(pre){var h=list.filter(function(n){return n.replace(/\s/g,'').toLowerCase()===pre.replace(/\s/g,'').toLowerCase()})[0];
+        if(pre){var nz=function(s){return s.toLowerCase().replace(/amg/g,'').replace(/[^a-z0-9]/g,'');};var h=list.filter(function(n){return nz(n)===nz(pre)})[0];
           if(h)trim.value=h;else{trim.value='__other';fTrimTxt.hidden=false;trimTxt.required=true;trimTxt.value=pre;}}
       } else {
         trim.hidden=true;trim.required=false;tLab.setAttribute('for','trimTxt');
@@ -782,6 +787,7 @@
         if(/^C\d|^E\d|^S\d|^GL|^ML|^CL|^G\d|^SL/i.test(r.Series||'')&&!vt)vt=r.Series;
         picker.set(r.ModelYear,r.Make,r.Model,vt).then(function(){
           var mk=EURO.concat(OTHER).filter(function(x){return x.toLowerCase()===String(r.Make).toLowerCase()})[0]||r.Make;
+          window.clearValid&&window.clearValid();
           say('✓ '+[r.ModelYear,mk,r.Model,r.Trim].filter(Boolean).join(' ')+(r.DisplacementL?' · '+parseFloat(r.DisplacementL).toFixed(1)+'L':''),'ok');
         });
       }).catch(function(){say("VIN lookup is unavailable right now. Please pick your vehicle below.",'err');});
@@ -800,7 +806,7 @@
   // Preferred date: no past dates, no Sundays (shop closed)
   (function(){
     var d=document.getElementById('pdate'),n=new Date();n.setMinutes(n.getMinutes()-n.getTimezoneOffset());d.min=n.toISOString().slice(0,10);
-    d.addEventListener('change',function(){ if(d.value&&new Date(d.value+'T12:00').getDay()===0){d.setCustomValidity('We are closed on Sundays. Please pick another day.');d.reportValidity();}else d.setCustomValidity(''); });
+    d.addEventListener('change',function(){ if(d.value&&new Date(d.value+'T12:00').getDay()===0){d.setCustomValidity('We are closed on Sundays. Please pick another day.');window.checkFields&&window.checkFields([d]);}else d.setCustomValidity(''); });
   })();
   // Show the address field only for mobile visits
   (function(){
@@ -825,6 +831,31 @@
   });
 
 
+  // Inline field errors: shown under the field, scrolled into view, cleared as soon as it's fixed
+  window.checkFields=function(list){
+    var first=null;
+    for(var i=0;i<list.length;i++){
+      var f=list[i];if(f.disabled)continue;
+      if(!f.checkValidity()){
+        var msg=f.validity.valueMissing?(f.tagName==='SELECT'?'Please choose one.':'Please fill this in.'):(f.validationMessage||'Please check this.');
+        if(f.type==='tel'&&!f.validity.valueMissing)msg='Enter a 10-digit phone number.';
+        if(f.type==='email'&&!f.validity.valueMissing)msg='Enter a valid email, like you@example.com.';
+        showErr(f,msg);if(!first)first=f;
+      }
+    }
+    if(first){first.scrollIntoView({behavior:'smooth',block:'center'});setTimeout(function(){first.focus({preventScroll:true});},350);return false;}
+    return true;
+  };
+  function showErr(f,msg){
+    var box=f.closest('.field')||f.parentNode,e=box.querySelector('.err');
+    if(!e){e=document.createElement('p');e.className='err';e.setAttribute('role','alert');box.appendChild(e);}
+    e.textContent=msg;f.setAttribute('aria-invalid','true');
+  }
+  window.clearValid=function(){document.querySelectorAll('#bookForm [aria-invalid]').forEach(function(f){if(f.checkValidity())clearErr(f);});};
+  function clearErr(f){var box=f.closest('.field')||f.parentNode,e=box&&box.querySelector('.err');if(e)e.remove();f.removeAttribute('aria-invalid');}
+  document.getElementById('bookForm').addEventListener('input',function(e){if(e.target.getAttribute('aria-invalid')&&e.target.checkValidity())clearErr(e.target);});
+  document.getElementById('bookForm').addEventListener('change',function(e){if(e.target.getAttribute('aria-invalid')&&e.target.checkValidity())clearErr(e.target);});
+
   // Two-step work order
   (function(){
     var s1=document.getElementById('step1'),s2=document.getElementById('step2'),lab=document.getElementById('stepLabel'),sum=document.getElementById('summary');
@@ -835,7 +866,7 @@
     }
     document.getElementById('toStep2').addEventListener('click',function(){
       var req=s1.querySelectorAll('select[required],input[required]');
-      for(var i=0;i<req.length;i++){ if(!req[i].checkValidity()){ req[i].reportValidity(); req[i].focus(); return; } }
+      if(!window.checkFields(req))return;
       var mobile=document.getElementById('b-mobile').checked;
       var dg=document.getElementById('b-diag').checked;
       sum.textContent=(dg?'Diagnostic on your car, quoted first':mobile?'At the seller, $300':'At our shop, $160')+'. '+vehicleText()+'.'+(dg?'':' Sold by: '+document.getElementById('freason').value.toLowerCase()+'.');
@@ -848,7 +879,7 @@
     window.go=function(e){
       e.preventDefault();
       var req=s2.querySelectorAll('[required]');
-      for(var i=0;i<req.length;i++){ if(!req[i].checkValidity()){ req[i].reportValidity(); req[i].focus(); return false; } }
+      if(!window.checkFields(req))return false;
       return orig(e);
     };
     form.onsubmit=function(e){return window.go(e);};
