@@ -93,6 +93,8 @@
   .field select:disabled{opacity:.55}
   .two{display:grid;grid-template-columns:1fr 1fr;gap:0 12px}
   .svc{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:0 0 18px;border:0;padding:0}
+  .svc label.diag{grid-column:1/-1}
+  .svc label.diag em.q{font-variation-settings:"wdth" 100;font-size:14px;font-weight:700}
   .svc legend{font-weight:600;font-size:14px;margin-bottom:6px;padding:0}
   .svc input{position:absolute;opacity:0;pointer-events:none}
   .svc label{display:block;cursor:pointer;background:#fffdf3;border:1.5px solid rgba(26,34,51,.28);border-radius:8px;padding:12px 14px;transition:border-color .15s,background-color .15s}
@@ -282,20 +284,22 @@
       <form id="bookForm" onsubmit="return go(event)" novalidate>
         <div id="step1">
           <fieldset class="svc">
-            <legend>Where should we inspect it?</legend>
+            <legend>What do you need?</legend>
             <input type="radio" name="svc2" id="b-shop" value="shop" checked>
             <label for="b-shop"><b>At our shop <em>$160</em></b><small>Bring the car to Alta Mere Dr</small></label>
             <input type="radio" name="svc2" id="b-mobile" value="mobile">
             <label for="b-mobile"><b>At the seller <em>$300</em></b><small>Dealer or private seller</small></label>
+            <input type="radio" name="svc2" id="b-diag" value="diag">
+            <label for="b-diag" class="diag"><b>Diagnostic on my own car <em class="q">Quoted first</em></b><small>Warning light, noise or a problem you want found</small></label>
           </fieldset>
           <div class="field">
-            <label class="lbl" for="vin">The car you're buying <i>(VIN fills it in for you)</i></label>
+            <label class="lbl" for="vin"><span id="carLabel">The car you're buying</span> <i>(VIN fills it in for you)</i></label>
             <input id="vin" placeholder="17-character VIN, optional" maxlength="17" autocomplete="off" spellcheck="false" autocapitalize="characters">
             <div class="vin-msg" id="vin-msg" aria-live="polite"></div>
           </div>
           <div class="or">or pick it</div>
           <div class="vehicle" data-vehicle data-vin="vin"></div>
-          <div class="field">
+          <div class="field" id="sellerRow">
             <label class="lbl" for="freason">Who is selling it?</label>
             <select id="freason" required>
               <option value="" disabled selected>Choose one</option>
@@ -321,7 +325,7 @@
             <div class="field"><label class="lbl" for="pdate">Preferred day <i>(optional)</i></label><input type="date" id="pdate" title="We're closed Sundays"></div>
             <div class="field"><label class="lbl" for="femail">Email <i>(optional)</i></label><input id="femail" type="email" autocomplete="email"></div>
           </div>
-          <div class="field"><label class="lbl" for="fnotes">Anything we should know? <i>(optional)</i></label><textarea id="fnotes" rows="3" placeholder="Listing link, seller contact, mileage, concerns"></textarea></div>
+          <div class="field"><label class="lbl" for="fnotes" id="notesLabel">Anything we should know? <i>(optional)</i></label><textarea id="fnotes" rows="3" placeholder="Listing link, seller contact, mileage, concerns"></textarea></div>
           <input type="text" name="_honey" id="fhoney" tabindex="-1" autocomplete="off" aria-hidden="true" style="position:absolute;left:-9999px;width:1px;height:1px;opacity:0">
           <button class="btn btn-ink btn-block" type="submit" id="bookSubmit">Send request</button>
           <p class="fine">We'll call or text to confirm your time. Rather talk? <a href="tel:+16825536089">682-553-6089</a></p>
@@ -425,6 +429,7 @@
       </div>
     </div>
     <p class="note">*The underside inspection is limited away from the lift.</p>
+    <p class="note">Problem with a car you already own? <a href="#book" data-svc="diag">Book a diagnostic</a>. We look at it and quote before any work.</p>
   </div>
 </section>
 
@@ -518,23 +523,26 @@
   function go(e){
     e.preventDefault();
     var f=e.target;
-    var mobile=document.getElementById('b-mobile').checked;
+    var mobile=document.getElementById('b-mobile').checked,diag=document.getElementById('b-diag').checked;
+    var svcLong=diag?'Diagnostic on own car (quote first)':mobile?'Inspection at the seller ($300)':'Inspection at our shop ($160)';
+    var svcShort=diag?'Diagnostic':mobile?'At seller $300':'Shop $160';
     var vs=f.querySelectorAll('[data-vehicle] select'),other=f.querySelector('[data-vehicle] input');
     var model=vs[2].value==='__other'||vs[1].value==='__other'?other.value.trim():vs[2].value;
+    var vehicle=window.vehicleFull(f);
     var mk=vs[1].value==='__other'?'':vs[1].value, yr=vs[0].value==='older'?'Pre-1950':vs[0].value;
     var d=val('pdate'),dateTxt='';
     if(d){var dt=new Date(d+'T12:00');dateTxt=dt.toLocaleDateString('en-US',{weekday:'short',month:'short',day:'numeric'});}
     var lines=[
-      'NEW INSPECTION REQUEST (website)',
-      'Service: '+(mobile?'Inspection at the seller - $300':'Inspection at our shop - $160'),
+      'NEW '+(diag?'DIAGNOSTIC':'INSPECTION')+' REQUEST (website)',
+      'Service: '+svcLong,
       'Name: '+val('fname'),
       'Phone: '+val('fphone'),
       val('femail')&&('Email: '+val('femail')),
-      'Vehicle: '+[yr,mk,model].filter(Boolean).join(' '),
+      'Vehicle: '+vehicle,
       val('vin')&&('VIN: '+val('vin')),
       dateTxt&&('Preferred date: '+dateTxt),
       mobile&&val('addr')&&('Car location: '+val('addr')),
-      'Seller: '+val('freason'),
+      !diag&&('Seller: '+val('freason')),
       val('fnotes')&&('Details: '+val('fnotes'))
     ].filter(Boolean);
     var msg=lines.join('\n');
@@ -565,13 +573,13 @@
     // Bots fill hidden fields; quietly pretend success.
     if(val('fhoney')){show('sent');return false;}
     var payload={
-      _subject:'New inspection request: '+[yr,mk,model].filter(Boolean).join(' ')+' ('+(mobile?'Mobile $300':'In-shop $160')+')',
+      _subject:'New '+(diag?'diagnostic':'inspection')+' request: '+vehicle+' ('+svcShort+')',
       _template:'table',_captcha:'false',
-      Service:mobile?'Inspection at the seller ($300)':'Inspection at our shop ($160)',
+      Service:svcLong,
       Name:val('fname'),Phone:val('fphone'),Email:val('femail')||'-',
-      Vehicle:[yr,mk,model].filter(Boolean).join(' '),VIN:val('vin')||'-',
+      Vehicle:vehicle,VIN:val('vin')||'-',
       'Preferred date':dateTxt||'-',Location:mobile?(val('addr')||'-'):'At the shop',
-      Seller:val('freason'),Details:val('fnotes')||'-'
+      Seller:diag?'-':val('freason'),Details:val('fnotes')||'-'
     };
     if(val('femail'))payload._replyto=val('femail');
     show('sending');btn.disabled=true;
@@ -606,6 +614,68 @@
     'MINI':['Clubman','Cooper','Countryman'],
     'Rolls-Royce':['Cullinan','Dawn','Ghost','Phantom','Wraith']
   };
+
+  // Versions / engines for common models (model names normalised: lower case, "-class" removed)
+  var TRIMS={
+    'mercedes-benz':{
+      'c':['C230','C250','C280','C300','C300 4MATIC','C350','C400 4MATIC','C43 AMG','C450 AMG','C55 AMG','C63 AMG','C63 S AMG'],
+      'e':['E320','E350','E350 4MATIC','E400','E450','E450 4MATIC','E500','E550','E43 AMG','E53 AMG','E55 AMG','E63 AMG','E63 S AMG'],
+      's':['S430','S450','S500','S550','S560','S580','S600','S63 AMG','S65 AMG','Maybach S580','Maybach S680'],
+      'cls':['CLS450','CLS550','CLS53 AMG','CLS63 AMG'],
+      'cla':['CLA250','CLA35 AMG','CLA45 AMG'],'gla':['GLA250','GLA35 AMG','GLA45 AMG'],'glb':['GLB250','GLB35 AMG'],
+      'glc':['GLC300','GLC300 4MATIC','GLC350e','GLC43 AMG','GLC63 AMG','GLC63 S AMG'],
+      'gle':['GLE350','GLE400','GLE450','GLE53 AMG','GLE580','GLE63 AMG','GLE63 S AMG'],
+      'm':['ML320','ML350','ML550','ML63 AMG'],
+      'gls':['GLS450','GLS550','GLS580','GLS63 AMG','Maybach GLS600'],
+      'g':['G500','G550','G55 AMG','G63 AMG'],
+      'sl':['SL450','SL500','SL550','SL55 AMG','SL63 AMG','SL65 AMG'],
+      'slk':['SLK250','SLK300','SLK350','SLK55 AMG'],
+      'amg gt':['GT','GT S','GT C','GT R','GT 53','GT 63','GT 63 S'],
+      'sprinter':['2500','3500','4x4']
+    },
+    'bmw':{
+      '3 series':['320i','325i','328i','328d','330i','330e','335i','340i','M340i'],
+      '4 series':['428i','430i','435i','440i','M440i'],
+      '5 series':['528i','530i','530e','535i','540i','550i','M550i'],
+      '7 series':['740i','740e','750i','760i','i7'],
+      'x3':['sDrive30i','xDrive28i','xDrive30i','M40i','X3 M'],
+      'x5':['xDrive35i','xDrive40i','xDrive45e','xDrive50i','M50i','M60i','X5 M'],
+      'x6':['xDrive35i','xDrive40i','xDrive50i','M50i','X6 M'],
+      'x7':['xDrive40i','M50i','M60i','Alpina XB7'],
+      'm3':['M3','M3 Competition','M3 CS'],'m4':['M4','M4 Competition','M4 CSL'],'m5':['M5','M5 Competition','M5 CS']
+    },
+    'audi':{
+      'a3':['2.0T','40 TFSI','S3','RS 3'],'a4':['2.0T','40 TFSI','45 TFSI','allroad','S4','RS 4'],'a5':['2.0T','45 TFSI','S5','RS 5'],
+      'a6':['2.0T','3.0T','45 TFSI','55 TFSI','allroad','S6','RS 6'],'a7':['3.0T','55 TFSI','S7','RS 7'],'a8':['3.0T','4.0T','55 TFSI','S8'],
+      'q5':['2.0T','45 TFSI','55 TFSI e','SQ5'],'q7':['3.0T','45 TFSI','55 TFSI','SQ7'],'q8':['55 TFSI','SQ8','RS Q8'],'r8':['V8','V10','V10 Plus','V10 Performance']
+    },
+    'porsche':{
+      '911':['Carrera','Carrera T','Carrera S','Carrera 4','Carrera 4S','Targa 4','Targa 4S','GTS','Turbo','Turbo S','GT3','GT3 RS'],
+      'cayenne':['Base','S','E-Hybrid','GTS','Turbo','Turbo S E-Hybrid'],'macan':['Base','S','T','GTS','Turbo'],
+      'panamera':['Base','4','4S','GTS','4 E-Hybrid','Turbo','Turbo S'],'taycan':['Base','4S','GTS','Turbo','Turbo S'],
+      '718 boxster':['Base','T','S','GTS 4.0','Spyder'],'718 cayman':['Base','T','S','GTS 4.0','GT4']
+    },
+    'land rover':{
+      'range rover':['SE','HSE','Supercharged','Autobiography','SV','P400','P530'],
+      'range rover sport':['SE','HSE','Dynamic','Supercharged','SVR','P400','P530'],
+      'range rover velar':['P250','P340','P380','P400'],'defender':['90','110','130','P300','P400','V8']
+    }
+  };
+  function trimList(make,model){
+    var mk=TRIMS[String(make).toLowerCase()];if(!mk)return null;
+    var k=String(model).toLowerCase().replace(/-class$/,'').replace(/ class$/,'').trim();
+    return mk[k]||null;
+  }
+  window.vehicleFull=function(scope){
+    var s=scope.querySelectorAll('[data-vehicle] select'),o=scope.querySelector('[data-vehicle] .model-other input');
+    var y=s[0].value==='older'?'Pre-1950':s[0].value,m=s[1].value==='__other'?'':s[1].value,md=(s[2].value==='__other'||s[1].value==='__other')?o.value.trim():s[2].value;
+    var tr=scope.querySelector('#trimSel'),tt=scope.querySelector('#trimTxt'),v='';
+    var box=tr&&tr.parentNode;var on=box&&!box.hidden;
+    if(on&&!tr.hidden&&tr.value&&tr.value!=='__other'&&tr.value!=='__unsure')v=tr.value;
+    if(on&&tt&&!tt.parentNode.hidden&&tt.value.trim())v=tt.value.trim();
+    var base=[y,m,md].filter(Boolean).join(' ');
+    return v?base+' ('+v+')':base+(tr&&tr.value==='__unsure'?' (version not sure)':'');
+  };
   var modelCache={};
   function el(tag,attrs,html){var e=document.createElement(tag);for(var k in attrs)e.setAttribute(k,attrs[k]);if(html!=null)e.innerHTML=html;return e;}
   function opt(v,label){var o=document.createElement('option');o.value=v;o.textContent=label||v;return o;}
@@ -629,6 +699,31 @@
     var year=el('select',{'aria-label':'Year',required:''}),make=el('select',{'aria-label':'Make',required:''}),model=el('select',{'aria-label':'Model',required:''});
     var other=el('input',{'class':'model-other',placeholder:'Type your model','aria-label':'Model (other)'});
     var fOther=el('div',{'class':'field model-other'});fOther.appendChild(other);fOther.hidden=true;
+    var fTrim=el('div',{'class':'field model-other'});fTrim.hidden=true;
+    var tLab=el('label',{'class':'lbl','for':'trimSel'},'Version / engine');
+    var trim=el('select',{id:'trimSel'});
+    var trimTxt=el('input',{id:'trimTxt',placeholder:'e.g. C63 S AMG, 330i, 2.0T','aria-label':'Version or engine'});
+    var fTrimTxt=el('div',{});fTrimTxt.appendChild(trimTxt);fTrimTxt.hidden=true;fTrimTxt.style.marginTop='8px';
+    fTrim.appendChild(tLab);fTrim.appendChild(trim);fTrim.appendChild(fTrimTxt);
+    function setTrims(pre){
+      var mdl=model.value==='__other'?other.value:model.value;
+      if(!make.value||!mdl||make.value==='__other'){fTrim.hidden=true;trim.required=false;trimTxt.required=false;return;}
+      var list=trimList(make.value,mdl);
+      fTrim.hidden=false;trim.innerHTML='';
+      if(list){
+        trim.hidden=false;trim.required=true;tLab.setAttribute('for','trimSel');tLab.textContent='Version / engine';
+        trim.appendChild(opt('','Choose the version'));list.forEach(function(n){trim.appendChild(opt(n))});
+        trim.appendChild(opt('__other','Other version…'));trim.appendChild(opt('__unsure','Not sure'));
+        fTrimTxt.hidden=true;trimTxt.required=false;
+        if(pre){var h=list.filter(function(n){return n.replace(/\s/g,'').toLowerCase()===pre.replace(/\s/g,'').toLowerCase()})[0];
+          if(h)trim.value=h;else{trim.value='__other';fTrimTxt.hidden=false;trimTxt.required=true;trimTxt.value=pre;}}
+      } else {
+        trim.hidden=true;trim.required=false;tLab.setAttribute('for','trimTxt');
+        fTrimTxt.hidden=false;fTrimTxt.style.marginTop='0';trimTxt.required=false;trimTxt.value=pre||'';tLab.innerHTML='Version / engine <i>(optional)</i>';
+      }
+    }
+    trim.addEventListener('change',function(){var o=trim.value==='__other';fTrimTxt.hidden=!o;fTrimTxt.style.marginTop='8px';trimTxt.required=o;if(o)trimTxt.focus();});
+    other.addEventListener('change',function(){setTrims();});
     year.appendChild(opt('','Year'));
     var now=new Date().getFullYear()+1;for(var y=now;y>=1950;y--)year.appendChild(opt(String(y)));
     year.appendChild(opt('older','Before 1950'));
@@ -636,10 +731,10 @@
     var g1=el('optgroup',{label:'European'}),g2=el('optgroup',{label:'Other makes'});
     EURO.forEach(function(m){g1.appendChild(opt(m))});OTHER.forEach(function(m){g2.appendChild(opt(m))});
     make.appendChild(g1);make.appendChild(g2);make.appendChild(opt('__other','Other make…'));
-    function resetModel(text){model.innerHTML='';model.appendChild(opt('',text||'Model'));model.disabled=true;fOther.hidden=true;other.required=false;}
+    function resetModel(text){model.innerHTML='';model.appendChild(opt('',text||'Model'));model.disabled=true;fOther.hidden=true;other.required=false;fTrim.hidden=true;trim.required=false;trimTxt.required=false;}
     resetModel('Model');
     var req=0;
-    function load(selectModel){
+    function load(selectModel,selectTrim){
       var y=year.value,m=make.value;
       if(m==='__other'){resetModel('Model');model.disabled=true;fOther.hidden=false;other.required=true;other.placeholder='Type your make and model';return Promise.resolve();}
       if(!y||!m){resetModel(!m?'Model':'Model');return Promise.resolve();}
@@ -653,20 +748,21 @@
         if(selectModel){
           var hit=list.filter(function(n){return n.toLowerCase()===selectModel.toLowerCase()})[0];
           if(hit)model.value=hit;else{model.value='__other';fOther.hidden=false;other.required=true;other.value=selectModel;}
+          setTrims(selectTrim);
         }
       });
     }
     year.addEventListener('change',function(){load()});
     make.addEventListener('change',function(){load()});
-    model.addEventListener('change',function(){var o=model.value==='__other';fOther.hidden=!o;other.required=o;other.placeholder='Type your model';if(o)other.focus();});
+    model.addEventListener('change',function(){var o=model.value==='__other';fOther.hidden=!o;other.required=o;other.placeholder='Type your model';if(o)other.focus();setTrims();});
     fYear.appendChild(year);fMake.appendChild(make);fModel.appendChild(model);
-    host.appendChild(fYear);host.appendChild(fMake);host.appendChild(fModel);host.appendChild(fOther);
-    return {set:function(y,m,mod){
+    host.appendChild(fYear);host.appendChild(fMake);host.appendChild(fModel);host.appendChild(fOther);host.appendChild(fTrim);
+    return {set:function(y,m,mod,tr){
       if(y){if(![].some.call(year.options,function(o){return o.value===String(y)}))year.appendChild(opt(String(y)));year.value=String(y);}
       var all=EURO.concat(OTHER),hit=all.filter(function(x){return x.toLowerCase()===String(m||'').toLowerCase()})[0];
       if(!hit&&m){hit=m.toLowerCase().replace(/\b\w/g,function(c){return c.toUpperCase()});make.insertBefore(opt(hit),make.lastChild);}
       if(hit)make.value=hit;
-      return load(mod);
+      return load(mod,tr);
     }};
   }
   document.querySelectorAll('[data-vehicle]').forEach(function(host){
@@ -682,7 +778,9 @@
       fetch(API+'DecodeVinValues/'+v+'?format=json').then(function(r){return r.json()}).then(function(d){
         var r=(d.Results||[])[0]||{};
         if(!r.Make||!r.ModelYear){say("We couldn't decode that VIN. Please pick your vehicle below.",'err');return;}
-        picker.set(r.ModelYear,r.Make,r.Model).then(function(){
+        var vt=(r.Trim||r.Series||'').replace(/^AMG\s+/,'');
+        if(/^C\d|^E\d|^S\d|^GL|^ML|^CL|^G\d|^SL/i.test(r.Series||'')&&!vt)vt=r.Series;
+        picker.set(r.ModelYear,r.Make,r.Model,vt).then(function(){
           var mk=EURO.concat(OTHER).filter(function(x){return x.toLowerCase()===String(r.Make).toLowerCase()})[0]||r.Make;
           say('✓ '+[r.ModelYear,mk,r.Model,r.Trim].filter(Boolean).join(' ')+(r.DisplacementL?' · '+parseFloat(r.DisplacementL).toFixed(1)+'L':''),'ok');
         });
@@ -707,9 +805,18 @@
   // Show the address field only for mobile visits
   (function(){
     var row=document.getElementById('addr-row'),addr=document.getElementById('addr');
-    function sync(){var m=document.getElementById('b-mobile').checked;row.hidden=!m;addr.required=m;}
+    function sync(){
+      var m=document.getElementById('b-mobile').checked,dg=document.getElementById('b-diag').checked;
+      row.hidden=!m;addr.required=m;
+      document.getElementById('sellerRow').hidden=dg;document.getElementById('freason').required=!dg;
+      document.getElementById('carLabel').textContent=dg?'Your car':"The car you're buying";
+      document.getElementById('orderTitle').textContent=dg?'Diagnostic request':'Inspection request';
+      var nl=document.getElementById('notesLabel'),nt=document.getElementById('fnotes');
+      nl.innerHTML=dg?"What's it doing?":'Anything we should know? <i>(optional)</i>';nt.required=dg;
+      nt.placeholder=dg?'Warning lights, noises, when it happens':'Listing link, seller contact, mileage, concerns';
+    }
     document.querySelectorAll('input[name=svc2]').forEach(function(r){r.addEventListener('change',sync)});
-    window.pick=function(v){try{document.getElementById(v==='shop'?'b-shop':'b-mobile').checked=true;sync();}catch(e){}};
+    window.pick=function(v){try{document.getElementById(v==='shop'?'b-shop':v==='diag'?'b-diag':'b-mobile').checked=true;sync();}catch(e){}};
     sync();
   })();
   // Service buttons (hero + pricing) preselect the service in the booking form
@@ -724,13 +831,14 @@
     function vehicleText(){
       var s=s1.querySelectorAll('[data-vehicle] select'),o=s1.querySelector('[data-vehicle] input');
       var y=s[0].value==='older'?'Pre-1950':s[0].value,m=s[1].value==='__other'?'':s[1].value,md=(s[2].value==='__other'||s[1].value==='__other')?o.value.trim():s[2].value;
-      return [y,m,md].filter(Boolean).join(' ');
+      return window.vehicleFull(s1);
     }
     document.getElementById('toStep2').addEventListener('click',function(){
       var req=s1.querySelectorAll('select[required],input[required]');
       for(var i=0;i<req.length;i++){ if(!req[i].checkValidity()){ req[i].reportValidity(); req[i].focus(); return; } }
       var mobile=document.getElementById('b-mobile').checked;
-      sum.textContent=(mobile?'At the seller, $300':'At our shop, $160')+'. '+vehicleText()+'. Sold by: '+document.getElementById('freason').value.toLowerCase()+'.';
+      var dg=document.getElementById('b-diag').checked;
+      sum.textContent=(dg?'Diagnostic on your car, quoted first':mobile?'At the seller, $300':'At our shop, $160')+'. '+vehicleText()+'.'+(dg?'':' Sold by: '+document.getElementById('freason').value.toLowerCase()+'.');
       s1.hidden=true;s2.hidden=false;lab.textContent='Step 2 of 2';
       document.getElementById('fname').focus();
     });
