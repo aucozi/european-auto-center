@@ -3,8 +3,8 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>European Auto Center | Car Diagnostics in Fort Worth</title>
-<meta name="description" content="Dealer-level diagnostics for European cars in Fort Worth. $160 at our shop on Alta Mere Dr, or $300 and we come to you. Since 1975.">
+<title>European Auto Center | Pre-Purchase Car Inspections in Fort Worth</title>
+<meta name="description" content="Pre-purchase inspections for used cars in Fort Worth. $160 at our shop on Alta Mere Dr, or $300 and we inspect the car at the seller. European specialists since 1975.">
 <link rel="icon" href="images/favicon.svg" type="image/svg+xml">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -250,20 +250,20 @@
     <a href="#questions">Questions</a>
   </nav>
   <a class="call" href="tel:+16825536089" aria-label="Call 682-553-6089"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3.1 19.5 19.5 0 0 1-6-6A19.8 19.8 0 0 1 2.1 4.2 2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7c.1.9.4 1.8.7 2.7a2 2 0 0 1-.5 2.1L8 9.8a16 16 0 0 0 6 6l1.3-1.3a2 2 0 0 1 2.1-.4c.9.3 1.8.6 2.7.7a2 2 0 0 1 1.7 2z"/></svg></a>
-  <a class="btn btn-ink" href="#book">Book a diagnostic</a>
+  <a class="btn btn-ink" href="#book">Book an inspection</a>
 </div></header>
 
 <main id="main">
 <section class="hero" id="book">
   <div class="wrap">
     <div class="hero-copy">
-      <h1 class="display">European car diagnostics in Fort Worth.</h1>
-      <p class="lede">Find out exactly what's wrong before you pay for repairs. Bring it to our shop, or we come to you.</p>
+      <h1 class="display">Pre-purchase car inspections in Fort Worth.</h1>
+      <p class="lede">Know what you're buying before you hand over the money. Bring the car to our shop, or we inspect it at the dealer or seller.</p>
     </div>
     <div class="hero-facts">
       <ul class="facts">
         <li><b>$160</b><span>at our shop on Alta Mere Dr</span></li>
-        <li><b>$300</b><span>mobile, anywhere in DFW</span></li>
+        <li><b>$300</b><span>at the seller, anywhere in DFW</span></li>
         <li><b>Since 1975</b><span>European specialists</span></li>
         <li><b>4.5 ★</b><span>customer rating</span></li>
       </ul>
@@ -276,39 +276,37 @@
 
     <div class="order" style="grid-area:order">
       <div class="order-head">
-        <h2 id="orderTitle">Diagnostic request</h2>
+        <h2 id="orderTitle">Inspection request</h2>
         <span class="step" id="stepLabel">Step 1 of 2</span>
       </div>
       <form id="bookForm" onsubmit="return go(event)" novalidate>
         <div id="step1">
           <fieldset class="svc">
-            <legend>Where should we check it?</legend>
+            <legend>Where should we inspect it?</legend>
             <input type="radio" name="svc2" id="b-shop" value="shop" checked>
-            <label for="b-shop"><b>At our shop <em>$160</em></b><small>Drop it off on Alta Mere Dr</small></label>
+            <label for="b-shop"><b>At our shop <em>$160</em></b><small>Bring the car to Alta Mere Dr</small></label>
             <input type="radio" name="svc2" id="b-mobile" value="mobile">
-            <label for="b-mobile"><b>We come to you <em>$300</em></b><small>Home, work or a seller</small></label>
+            <label for="b-mobile"><b>At the seller <em>$300</em></b><small>Dealer or private seller</small></label>
           </fieldset>
           <div class="field">
-            <label class="lbl" for="vin">Your vehicle <i>(VIN fills it in for you)</i></label>
+            <label class="lbl" for="vin">The car you're buying <i>(VIN fills it in for you)</i></label>
             <input id="vin" placeholder="17-character VIN, optional" maxlength="17" autocomplete="off" spellcheck="false" autocapitalize="characters">
             <div class="vin-msg" id="vin-msg" aria-live="polite"></div>
           </div>
           <div class="or">or pick it</div>
           <div class="vehicle" data-vehicle data-vin="vin"></div>
           <div class="field">
-            <label class="lbl" for="freason">What do you need?</label>
+            <label class="lbl" for="freason">Who is selling it?</label>
             <select id="freason" required>
               <option value="" disabled selected>Choose one</option>
-              <option>Check engine / warning light</option>
-              <option>Pre-purchase inspection</option>
-              <option>Won't start</option>
-              <option>Noise or vibration</option>
-              <option>Electrical problem</option>
-              <option>Something else</option>
+              <option>A dealer</option>
+              <option>A private seller</option>
+              <option>Online / out of town listing</option>
+              <option>Not sure yet</option>
             </select>
           </div>
           <button class="btn btn-ink btn-block" type="button" id="toStep2">Continue</button>
-          <p class="fine">No payment until the diagnostic is done.</p>
+          <p class="fine">No payment until the inspection is done.</p>
         </div>
 
         <div id="step2" hidden>
@@ -318,12 +316,12 @@
             <div class="field"><label class="lbl" for="fname">Your name</label><input id="fname" autocomplete="name" required></div>
             <div class="field"><label class="lbl" for="fphone">Mobile number</label><input id="fphone" type="tel" inputmode="tel" autocomplete="tel" placeholder="(817) 555-0123" required></div>
           </div>
-          <div class="field" id="addr-row" hidden><label class="lbl" for="addr">Where should we meet you?</label><input id="addr" autocomplete="street-address" placeholder="Street address, city"></div>
+          <div class="field" id="addr-row" hidden><label class="lbl" for="addr">Where is the car?</label><input id="addr" autocomplete="street-address" placeholder="Seller or dealer address, city"></div>
           <div class="two">
             <div class="field"><label class="lbl" for="pdate">Preferred day <i>(optional)</i></label><input type="date" id="pdate" title="We're closed Sundays"></div>
             <div class="field"><label class="lbl" for="femail">Email <i>(optional)</i></label><input id="femail" type="email" autocomplete="email"></div>
           </div>
-          <div class="field"><label class="lbl" for="fnotes">What's it doing? <i>(optional)</i></label><textarea id="fnotes" rows="3" placeholder="Warning lights, noises, when it happens"></textarea></div>
+          <div class="field"><label class="lbl" for="fnotes">Anything we should know? <i>(optional)</i></label><textarea id="fnotes" rows="3" placeholder="Listing link, seller contact, mileage, concerns"></textarea></div>
           <input type="text" name="_honey" id="fhoney" tabindex="-1" autocomplete="off" aria-hidden="true" style="position:absolute;left:-9999px;width:1px;height:1px;opacity:0">
           <button class="btn btn-ink btn-block" type="submit" id="bookSubmit">Send request</button>
           <p class="fine">We'll call or text to confirm your time. Rather talk? <a href="tel:+16825536089">682-553-6089</a></p>
@@ -336,14 +334,14 @@
 <section class="sec white" id="how">
   <div class="wrap">
     <div class="sec-head">
-      <h2 class="display">How a diagnostic works</h2>
-      <p class="intro">A warning light, a strange noise, or a car you're about to buy. Here's what happens after you book.</p>
+      <h2 class="display">How an inspection works</h2>
+      <p class="intro">From the listing you found to a decision you can trust.</p>
     </div>
     <ol class="process">
-      <li><h3>You book</h3><p>Pick the shop or a mobile visit and tell us about the car. We confirm a time by phone or text.</p></li>
-      <li><h3>We test it</h3><p>Every control module scanned, live data read, a road test and a hands-on inspection.</p></li>
-      <li><h3>You get the report</h3><p>Fault codes, findings and photos, explained in plain English.</p></li>
-      <li><h3>You decide</h3><p>An itemized estimate. Fix it with us or take the report anywhere.</p></li>
+      <li><h3>You book</h3><p>Tell us about the car and where it is. We confirm a time with you, and with the seller if you like.</p></li>
+      <li><h3>We inspect it</h3><p>A full computer scan, a road test and a hands-on check from bumper to bumper.</p></li>
+      <li><h3>You get the report</h3><p>Findings, photos and fault codes, explained in plain English, the same day.</p></li>
+      <li><h3>You decide</h3><p>Buy it, walk away, or use the repair costs we list to negotiate the price.</p></li>
     </ol>
   </div>
 </section>
@@ -352,14 +350,14 @@
   <div class="wrap">
     <div class="sec-head">
       <h2 class="display">What we check</h2>
-      <p class="intro">A generic code reader sees a fraction of a European car. We use tools built for it.</p>
+      <p class="intro">The things a seller won't mention and a quick test drive won't show.</p>
     </div>
     <div class="checks">
-      <div><h3>All control modules</h3><p>Stored and history codes from every module, not just the engine.</p></div>
+      <div><h3>Hidden fault codes</h3><p>Stored and history codes from every module, including ones recently cleared.</p></div>
       <div><h3>Engine and drivetrain</h3><p>Misfires, timing, turbo, oil leaks, cooling, transmission behavior.</p></div>
       <div><h3>Brakes and suspension</h3><p>Pads, rotors, control arms, bushings, shocks and air suspension.</p></div>
-      <div><h3>Electrical</h3><p>Battery and charging, parasitic draw, lighting and comfort electronics.</p></div>
-      <div><h3>Safety systems</h3><p>Airbags, ABS, stability control and driver-assist warnings.</p></div>
+      <div><h3>Body and accident signs</h3><p>Paint depth, panel gaps, repairs, rust and flood damage.</p></div>
+      <div><h3>Electrical and safety</h3><p>Battery, charging, lights, airbags, ABS and driver-assist systems.</p></div>
       <div><h3>Road test</h3><p>Noises, vibrations, shifting, steering and how the car drives.</p></div>
     </div>
   </div>
@@ -368,19 +366,19 @@
 <section class="sec white" id="report">
   <div class="wrap report">
     <div>
-      <h2 class="display">A report you can actually read</h2>
-      <p class="intro">Sent to your phone and email the same day. Use it to plan repairs, negotiate a price, or get a second opinion.</p>
+      <h2 class="display">A report you can use</h2>
+      <p class="intro">Sent to your phone and email the same day. Use it to decide, or to negotiate the price down.</p>
       <ul>
         <li>Each finding marked good, watch or fix now</li>
         <li>Fault codes with plain-English explanations</li>
         <li>Photos of anything we find</li>
-        <li>An itemized repair estimate</li>
+        <li>Repair costs for anything that needs work</li>
       </ul>
-      <a class="btn btn-ink" href="#book">Book a diagnostic</a>
+      <a class="btn btn-ink" href="#book">Book an inspection</a>
     </div>
-    <article class="sheet" aria-label="Example diagnostic report">
+    <article class="sheet" aria-label="Example inspection report">
       <header>
-        <div><b>Diagnostic report</b><small>Example: 2018 BMW 530i, 62,410 miles</small></div>
+        <div><b>Inspection report</b><small>Example: 2018 BMW 530i, 62,410 miles</small></div>
         <img src="images/logo.svg" alt="" width="72" height="55">
       </header>
       <div class="row"><div>Engine performance<small>No active faults</small></div><span class="tag t-ok">Good</span></div>
@@ -396,34 +394,34 @@
   <div class="wrap">
     <div class="sec-head">
       <h2 class="display">Two flat prices</h2>
-      <p class="intro">You know the price before we start. No payment until the diagnostic is done.</p>
+      <p class="intro">Flat prices, no surprises. No payment until the inspection is done.</p>
     </div>
     <div class="prices">
       <div class="price">
         <h3>At our shop</h3>
-        <p class="for">Drop it off at 3129 Alta Mere Dr</p>
+        <p class="for">Bring the car to 3129 Alta Mere Dr</p>
         <div class="amt">$160</div>
         <ul>
-          <li>Full scan of every module</li>
-          <li>Live data and road test</li>
+          <li>Full computer scan of every module</li>
+          <li>Road test</li>
           <li>Lift inspection of the underside</li>
           <li>Written report with photos</li>
-          <li>Itemized repair estimate</li>
+          <li>Repair cost estimates</li>
         </ul>
         <a class="btn btn-ink btn-block" href="#book" data-svc="shop">Book at the shop</a>
       </div>
       <div class="price mobile">
-        <h3>We come to you</h3>
-        <p class="for">Home, work, or the seller's driveway</p>
+        <h3>At the seller</h3>
+        <p class="for">At the dealer or the seller's driveway</p>
         <div class="amt">$300</div>
         <ul>
-          <li>Everything in the shop diagnostic*</li>
-          <li>For cars that won't start or aren't safe to drive</li>
-          <li>Pre-purchase checks at a dealer or private seller</li>
+          <li>Everything in the shop inspection*</li>
+          <li>No need to borrow the car from the seller</li>
+          <li>We can coordinate the time with the seller</li>
           <li>Report sent the same day</li>
           <li>Anywhere in Dallas–Fort Worth</li>
         </ul>
-        <a class="btn btn-block" href="#book" data-svc="mobile">Book a mobile visit</a>
+        <a class="btn btn-block" href="#book" data-svc="mobile">Book at the seller</a>
       </div>
     </div>
     <p class="note">*The underside inspection is limited away from the lift.</p>
@@ -469,10 +467,10 @@
   <div class="wrap">
     <div class="sec-head"><h2 class="display">Questions</h2></div>
     <div class="faq">
-      <details><summary>What's the difference between the shop and a mobile visit?</summary><p>Both include a full scan, live data, a road test and a written report. At the shop ($160) we also put the car on a lift. A mobile visit ($300) brings us to you, which suits cars that won't start, busy days, or checking a car before you buy it.</p></details>
-      <details><summary>Can you check a car I'm thinking of buying?</summary><p>Yes. Book a mobile visit and we'll meet the car at the dealer or private seller. You'll have the report before any money changes hands.</p></details>
-      <details><summary>How long does it take?</summary><p>Most diagnostics take one to two hours. Intermittent electrical faults can take longer, and we'll call you before going past the quoted price.</p></details>
-      <details><summary>Do I have to get the repairs done with you?</summary><p>No. The report is yours. If you choose us, you'll get an itemized estimate before any work starts.</p></details>
+      <details><summary>What's the difference between the shop and the seller option?</summary><p>Both include a full computer scan, a road test and a written report with photos. At our shop ($160) we also put the car on a lift. At the seller ($300) we go to the car, so you don't have to borrow it.</p></details>
+      <details><summary>Will the seller let you inspect it?</summary><p>Most reputable dealers and private sellers do. If a seller refuses an inspection, that is worth knowing too. We can call the seller to set up a time.</p></details>
+      <details><summary>How long does it take?</summary><p>About one to two hours. You get the report the same day.</p></details>
+      <details><summary>Do you also fix cars or check a car I already own?</summary><p>Yes. We've repaired European cars since 1975. Call or text <a href="tel:+16825536089">682-553-6089</a> for repairs or a diagnostic on your own car.</p></details>
       <details><summary>How far do you travel?</summary><p>Anywhere in Dallas–Fort Worth. Not sure we reach you? Call or text <a href="tel:+16825536089">682-553-6089</a>. Need a tow instead? We run a 24/7 wrecker service.</p></details>
     </div>
   </div>
@@ -480,9 +478,9 @@
 
 <section class="close">
   <div class="wrap">
-    <h2 class="display">Know what's wrong before you pay.</h2>
+    <h2 class="display">Know the car before you buy it.</h2>
     <div class="btns">
-      <a class="btn btn-ink" href="#book">Book a diagnostic</a>
+      <a class="btn btn-ink" href="#book">Book an inspection</a>
       <a class="btn btn-line" href="tel:+16825536089">Call 682-553-6089</a>
     </div>
   </div>
@@ -491,7 +489,7 @@
 
 <footer><div class="wrap">
   <div class="cols">
-    <div><img class="badge" src="images/logo.svg" alt="European Auto Center logo" width="140" height="107"><p>Diagnostics, repair, parts and sales for European cars. Serving Fort Worth since 1975, with courtesy transportation and a 24/7 wrecker service.</p></div>
+    <div><img class="badge" src="images/logo.svg" alt="European Auto Center logo" width="140" height="107"><p>Pre-purchase inspections, repair, parts and sales for European cars. Serving Fort Worth since 1975, with courtesy transportation and a 24/7 wrecker service.</p></div>
     <div><h3>Locations</h3><p>3129 Alta Mere Drive<br>Fort Worth, TX 76116</p><p style="margin-top:12px">11300 White Settlement Rd<br>Fort Worth, TX 76108</p></div>
     <div><h3>Contact</h3><p>Call or text <a href="tel:+16825536089">682-553-6089</a><br>Text <a href="sms:+18177138060">817-713-8060</a><br><a href="mailto:ziad@theautoplace.com">ziad@theautoplace.com</a><br><a href="https://theautoplace.com">Cars for sale</a></p></div>
   </div>
@@ -527,16 +525,16 @@
     var d=val('pdate'),dateTxt='';
     if(d){var dt=new Date(d+'T12:00');dateTxt=dt.toLocaleDateString('en-US',{weekday:'short',month:'short',day:'numeric'});}
     var lines=[
-      'NEW DIAGNOSTIC REQUEST (website)',
-      'Service: '+(mobile?'Mobile diagnostic - $300':'In-shop diagnostic - $160'),
+      'NEW INSPECTION REQUEST (website)',
+      'Service: '+(mobile?'Inspection at the seller - $300':'Inspection at our shop - $160'),
       'Name: '+val('fname'),
       'Phone: '+val('fphone'),
       val('femail')&&('Email: '+val('femail')),
       'Vehicle: '+[yr,mk,model].filter(Boolean).join(' '),
       val('vin')&&('VIN: '+val('vin')),
       dateTxt&&('Preferred date: '+dateTxt),
-      mobile&&val('addr')&&('Location: '+val('addr')),
-      'Reason: '+val('freason'),
+      mobile&&val('addr')&&('Car location: '+val('addr')),
+      'Seller: '+val('freason'),
       val('fnotes')&&('Details: '+val('fnotes'))
     ].filter(Boolean);
     var msg=lines.join('\n');
@@ -567,13 +565,13 @@
     // Bots fill hidden fields; quietly pretend success.
     if(val('fhoney')){show('sent');return false;}
     var payload={
-      _subject:'New diagnostic request: '+[yr,mk,model].filter(Boolean).join(' ')+' ('+(mobile?'Mobile $300':'In-shop $160')+')',
+      _subject:'New inspection request: '+[yr,mk,model].filter(Boolean).join(' ')+' ('+(mobile?'Mobile $300':'In-shop $160')+')',
       _template:'table',_captcha:'false',
-      Service:mobile?'Mobile diagnostic ($300)':'In-shop diagnostic ($160)',
+      Service:mobile?'Inspection at the seller ($300)':'Inspection at our shop ($160)',
       Name:val('fname'),Phone:val('fphone'),Email:val('femail')||'-',
       Vehicle:[yr,mk,model].filter(Boolean).join(' '),VIN:val('vin')||'-',
       'Preferred date':dateTxt||'-',Location:mobile?(val('addr')||'-'):'At the shop',
-      Reason:val('freason'),Details:val('fnotes')||'-'
+      Seller:val('freason'),Details:val('fnotes')||'-'
     };
     if(val('femail'))payload._replyto=val('femail');
     show('sending');btn.disabled=true;
@@ -732,7 +730,7 @@
       var req=s1.querySelectorAll('select[required],input[required]');
       for(var i=0;i<req.length;i++){ if(!req[i].checkValidity()){ req[i].reportValidity(); req[i].focus(); return; } }
       var mobile=document.getElementById('b-mobile').checked;
-      sum.textContent=(mobile?'Mobile visit, $300':'At our shop, $160')+'. '+vehicleText()+'. '+document.getElementById('freason').value+'.';
+      sum.textContent=(mobile?'At the seller, $300':'At our shop, $160')+'. '+vehicleText()+'. Sold by: '+document.getElementById('freason').value.toLowerCase()+'.';
       s1.hidden=true;s2.hidden=false;lab.textContent='Step 2 of 2';
       document.getElementById('fname').focus();
     });
