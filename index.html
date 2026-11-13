@@ -524,6 +524,8 @@
   var SHOP_SMS='+16825536089';
   // Booking requests are emailed here (via FormSubmit). Change this one line to send them elsewhere.
   var SHOP_EMAIL='ziad@theautoplace.com';
+  // Phone alerts: install the free ntfy app and subscribe to this channel name. Keep it private.
+  var NTFY_TOPIC='eac-requests-b3747ed25d13';
   function val(id){var e=document.getElementById(id);return e?e.value.trim():'';}
   function go(e){
     e.preventDefault();
@@ -588,13 +590,19 @@
     };
     if(val('femail'))payload._replyto=val('femail');
     show('sending');btn.disabled=true;
-    var ctl=('AbortController' in window)?new AbortController():null,timer=setTimeout(function(){ctl&&ctl.abort();},15000);
-    fetch('https://formsubmit.co/ajax/'+SHOP_EMAIL,{method:'POST',headers:{'Content-Type':'application/json','Accept':'application/json'},body:JSON.stringify(payload),signal:ctl?ctl.signal:undefined})
-      .then(function(r){return r.json().then(function(j){return {ok:r.ok,j:j};});})
-      .then(function(res){clearTimeout(timer);btn.disabled=false;
-        if(res.ok&&String(res.j.success)==='true'){show('sent');}else{show('fallback');}
-      })
-      .catch(function(){clearTimeout(timer);btn.disabled=false;show('fallback');});
+    function timed(ms){var c=('AbortController' in window)?new AbortController():null;var tm=setTimeout(function(){c&&c.abort();},ms);return {signal:c?c.signal:undefined,done:function(){clearTimeout(tm);}};}
+    // 1) Instant phone alert through ntfy (free app). Tapping the alert calls the customer.
+    var a=timed(10000),digits=val('fphone').replace(/\D/g,'');
+    var alertP=fetch('https://ntfy.sh/'+NTFY_TOPIC,{method:'POST',body:msg,signal:a.signal,headers:{
+        'Title':(diag?'Diagnostic':'Inspection')+' request: '+vehicle,
+        'Priority':'high','Tags':diag?'wrench':'car','Click':'tel:+1'+digits.slice(-10)}})
+      .then(function(r){a.done();return r.ok;}).catch(function(){a.done();return false;});
+    // 2) Email copy through FormSubmit
+    var e=timed(15000);
+    var mailP=fetch('https://formsubmit.co/ajax/'+SHOP_EMAIL,{method:'POST',headers:{'Content-Type':'application/json','Accept':'application/json'},body:JSON.stringify(payload),signal:e.signal})
+      .then(function(r){return r.json().then(function(j){e.done();return r.ok&&String(j.success)==='true';});})
+      .catch(function(){e.done();return false;});
+    Promise.all([alertP,mailP]).then(function(r){btn.disabled=false;show(r[0]||r[1]?'sent':'fallback');});
     return false;
   }
   function escapeHtml(s){return String(s).replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];});}
