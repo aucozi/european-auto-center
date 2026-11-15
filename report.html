@@ -1,0 +1,275 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>Inspection Report | European Auto Center</title>
+<link rel="icon" href="images/favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,400..800&display=swap" rel="stylesheet">
+<style>
+  :root{--canary:#F3DC6B;--ink:#1A2233;--ink-2:#2B3650;--steel:#5E6878;--line:#E2E5EA;--paper:#F6F7F9;--ok:#1E7A46;--watch:#9A6B00;--fix:#B3261E}
+  *{box-sizing:border-box}
+  [hidden]{display:none !important}
+  body{margin:0;background:var(--paper);color:var(--ink);font:400 16px/1.5 Archivo,system-ui,sans-serif}
+  .bar{position:sticky;top:0;z-index:10;background:var(--ink);color:#fff}
+  .bar .in{max-width:900px;margin:0 auto;padding:10px 16px;display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+  .bar b{margin-right:auto;font-size:15px}
+  .bar small{display:block;font-weight:400;color:#b7c0cf;font-size:12.5px}
+  .btn{display:inline-flex;align-items:center;justify-content:center;min-height:42px;padding:0 16px;border-radius:999px;border:2px solid transparent;font:700 15px/1 Archivo,sans-serif;cursor:pointer;text-decoration:none}
+  .btn-y{background:var(--canary);color:var(--ink)}
+  .btn-o{background:transparent;border-color:#56627c;color:#fff}
+  .btn-d{background:#fff;border-color:var(--line);color:var(--ink)}
+  .sheet{max-width:900px;margin:20px auto 60px;background:#fff;border:1px solid var(--line);border-radius:8px;padding:36px}
+  header.top{display:flex;justify-content:space-between;align-items:flex-start;gap:20px;border-bottom:3px solid var(--ink);padding-bottom:18px;margin-bottom:22px}
+  header.top img{width:120px}
+  h1{font-variation-settings:"wdth" 68;font-weight:800;font-size:40px;line-height:1;margin:0 0 6px}
+  .meta{color:var(--steel);font-size:14px}
+  .meta input{border:0;border-bottom:1px dashed var(--line);font:inherit;color:var(--ink);width:110px;padding:0}
+  h2{font-variation-settings:"wdth" 68;font-weight:800;font-size:24px;margin:30px 0 12px;padding-top:14px;border-top:1px solid var(--line)}
+  .grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px 16px}
+  .grid.two{grid-template-columns:1fr 1fr}
+  label.f{display:block;font-size:13px;font-weight:600;color:var(--steel)}
+  label.f input,label.f select,textarea{display:block;width:100%;margin-top:4px;min-height:40px;padding:8px 10px;border:1.5px solid var(--line);border-radius:6px;font:400 15px Archivo,sans-serif;color:var(--ink);background:#fff}
+  textarea{min-height:70px;resize:vertical}
+  .verdict{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:12px}
+  .verdict input{position:absolute;opacity:0}
+  .verdict label{display:block;text-align:center;padding:12px 8px;border:2px solid var(--line);border-radius:8px;font-weight:700;cursor:pointer}
+  .verdict input:checked+label.v-ok{background:#e2f3e8;border-color:var(--ok);color:var(--ok)}
+  .verdict input:checked+label.v-watch{background:#fbf1c7;border-color:var(--watch);color:var(--watch)}
+  .verdict input:checked+label.v-fix{background:#f9e0de;border-color:var(--fix);color:var(--fix)}
+  .item{display:grid;grid-template-columns:1fr auto;gap:6px 14px;padding:10px 0;border-bottom:1px solid var(--line);align-items:center}
+  .item .name{font-weight:600}
+  .item .note{grid-column:1/-1}
+  .item .note input{width:100%;border:0;border-bottom:1px dashed var(--line);font:14px Archivo,sans-serif;color:var(--ink);padding:4px 0;background:transparent}
+  .pills{display:flex;gap:4px}
+  .pills input{position:absolute;opacity:0}
+  .pills label{padding:6px 10px;border:1.5px solid var(--line);border-radius:999px;font-size:13px;font-weight:700;cursor:pointer;color:var(--steel)}
+  .pills input:checked+label.p-ok{background:var(--ok);border-color:var(--ok);color:#fff}
+  .pills input:checked+label.p-watch{background:#E9B10A;border-color:#E9B10A;color:var(--ink)}
+  .pills input:checked+label.p-fix{background:var(--fix);border-color:var(--fix);color:#fff}
+  .pills input:checked+label.p-na{background:var(--steel);border-color:var(--steel);color:#fff}
+  .pills input:focus-visible+label{outline:3px solid var(--ink);outline-offset:2px}
+  .tally{display:flex;gap:16px;font-weight:700;margin:6px 0 0}
+  .tally .g{color:var(--ok)}.tally .w{color:var(--watch)}.tally .x{color:var(--fix)}
+  table.est{width:100%;border-collapse:collapse}
+  table.est th{text-align:left;font-size:13px;color:var(--steel);border-bottom:2px solid var(--ink);padding:6px 4px}
+  table.est td{border-bottom:1px solid var(--line);padding:4px}
+  table.est input,table.est select{width:100%;border:0;font:15px Archivo,sans-serif;padding:6px 4px;background:transparent;color:var(--ink)}
+  table.est td.cost{width:120px}table.est td.pr{width:130px}table.est td.x{width:40px;text-align:center}
+  table.est tfoot td{font-weight:800;font-size:18px;border:0;padding-top:10px}
+  .rm{border:0;background:none;font-size:20px;cursor:pointer;color:var(--steel)}
+  .photos{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+  .ph{border:1px solid var(--line);border-radius:6px;overflow:hidden;position:relative;break-inside:avoid}
+  .ph img{width:100%;aspect-ratio:4/3;object-fit:cover;display:block}
+  .ph input{width:100%;border:0;border-top:1px solid var(--line);padding:6px 8px;font:13px Archivo,sans-serif}
+  .ph .rm{position:absolute;top:4px;right:4px;background:#fff;border-radius:50%;width:28px;height:28px;font-size:18px;line-height:1}
+  .hint{color:var(--steel);font-size:13.5px;margin:4px 0 10px}
+  .sign{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:10px}
+  footer.f{margin-top:30px;padding-top:14px;border-top:3px solid var(--ink);display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;font-size:13px;color:var(--steel)}
+  .saved{font-size:12.5px;color:#b7c0cf}
+  @media (max-width:700px){.sheet{padding:20px;margin:0;border-radius:0;border:0}.grid{grid-template-columns:1fr 1fr}.grid.two{grid-template-columns:1fr}.photos{grid-template-columns:1fr 1fr}h1{font-size:32px}header.top img{width:84px}.item{grid-template-columns:1fr}}
+  @media print{
+    @page{size:letter;margin:12mm}
+    body{background:#fff;font-size:12.5px}
+    .bar,.noprint,.rm{display:none !important}
+    .sheet{border:0;margin:0;padding:0;max-width:none}
+    .pills label{display:none}
+    .pills input:checked+label{display:inline-block;padding:2px 8px}
+    .item{padding:5px 0;break-inside:avoid}
+    .item .note input:placeholder-shown{display:none}
+    label.f input,label.f select,textarea{border:0;padding:0;min-height:0;margin-top:0;font-weight:600}
+    textarea{resize:none;overflow:visible}
+    h2{break-after:avoid;margin-top:16px;font-size:19px}
+    .verdict input:not(:checked)+label{display:none}
+    .verdict{grid-template-columns:1fr}
+    *{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+    #sections{columns:2;column-gap:28px}
+    #sections h2{break-inside:avoid;column-span:none;margin-top:12px;padding-top:8px}
+    .item{grid-template-columns:1fr auto;gap:2px 8px}
+    select{appearance:none;-webkit-appearance:none;background:none}
+    .meta input{width:auto}
+  }
+</style>
+</head>
+<body>
+
+<div class="bar"><div class="in">
+  <b>Inspection report<small class="saved" id="saved">Saved on this device</small></b>
+  <button class="btn btn-o" type="button" id="newBtn">New report</button>
+  <button class="btn btn-o" type="button" id="textBtn">Text summary</button>
+  <button class="btn btn-y" type="button" onclick="window.print()">Save as PDF</button>
+</div></div>
+
+<main class="sheet" id="sheet">
+  <header class="top">
+    <div>
+      <h1>Pre-purchase inspection report</h1>
+      <div class="meta">Report no. <input data-k="no" id="repNo" style="width:170px"> &nbsp; Date <input type="date" data-k="date" id="repDate" style="width:140px"></div>
+    </div>
+    <img src="images/logo.svg" alt="European Auto Center">
+  </header>
+
+  <h2 style="border:0;padding:0;margin-top:0">Vehicle and customer</h2>
+  <div class="grid">
+    <label class="f">Customer<input data-k="cust"></label>
+    <label class="f">Customer phone<input data-k="phone" inputmode="tel"></label>
+    <label class="f">Inspection<select data-k="where"><option>At our shop ($160)</option><option>At the seller ($300)</option></select></label>
+    <label class="f">Year, make, model<input data-k="car" placeholder="2015 Mercedes-Benz E-Class"></label>
+    <label class="f">Version / engine<input data-k="trim" placeholder="E63 S AMG, 5.5L"></label>
+    <label class="f">VIN<input data-k="vin" maxlength="17" style="text-transform:uppercase"></label>
+    <label class="f">Mileage<input data-k="miles" inputmode="numeric"></label>
+    <label class="f">Color<input data-k="color"></label>
+    <label class="f">Seller / location<input data-k="seller"></label>
+  </div>
+
+  <h2>Overall result</h2>
+  <div class="verdict">
+    <input type="radio" name="verdict" id="v1" value="Recommended" data-k="verdict"><label for="v1" class="v-ok">Recommended</label>
+    <input type="radio" name="verdict" id="v2" value="Buy with repairs" data-k="verdict"><label for="v2" class="v-watch">Buy with repairs</label>
+    <input type="radio" name="verdict" id="v3" value="Not recommended" data-k="verdict"><label for="v3" class="v-fix">Not recommended</label>
+  </div>
+  <label class="f">Summary for the buyer<textarea data-k="summary" placeholder="In plain words: overall condition, the main issues, and what they'd cost."></textarea></label>
+  <div class="tally" id="tally"></div>
+
+  <div id="sections"></div>
+
+  <h2>Fault codes</h2>
+  <p class="hint">Every code found, including stored and history codes, with what it means.</p>
+  <textarea data-k="codes" placeholder="P0300 Random misfire (history)&#10;C1140 Hydraulic unit (stored)"></textarea>
+
+  <h2>Repair estimate</h2>
+  <table class="est">
+    <thead><tr><th>Repair</th><th>Priority</th><th>Estimated cost</th><th class="noprint"></th></tr></thead>
+    <tbody id="estRows"></tbody>
+    <tfoot><tr><td>Total</td><td></td><td id="estTotal">$0</td><td></td></tr></tfoot>
+  </table>
+  <button class="btn btn-d noprint" type="button" id="addRow" style="margin-top:10px">Add repair</button>
+
+  <h2>Photos</h2>
+  <p class="hint noprint">Add photos of anything worth showing: leaks, damage, worn parts, the dash with codes.</p>
+  <input class="noprint" type="file" id="photoIn" accept="image/*" multiple>
+  <div class="photos" id="photos" style="margin-top:12px"></div>
+
+  <h2>Inspector</h2>
+  <div class="sign">
+    <label class="f">Inspected by<input data-k="tech"></label>
+    <label class="f">Notes<input data-k="technote"></label>
+  </div>
+
+  <footer class="f">
+    <span>European Auto Center · 3129 Alta Mere Dr, Fort Worth, TX 76116 · 682-553-6089</span>
+    <span>This report reflects the vehicle's condition at the time of inspection.</span>
+  </footer>
+</main>
+
+<script>
+  var SECTIONS=[
+    ['Computer scan',['All modules scanned','Readiness monitors','Recently cleared codes','Warning lights on the dash']],
+    ['Engine',['Starts and idles smoothly','Oil level and condition','Coolant level and condition','Leaks','Belts and hoses','Turbo / supercharger','Exhaust smoke and noise']],
+    ['Transmission and drivetrain',['Shift quality','Fluid condition','Axles and CV boots','Differential / transfer case','Clutch (manual)']],
+    ['Brakes',['Front pads and rotors','Rear pads and rotors','Brake fluid','Parking brake','ABS operation']],
+    ['Suspension and steering',['Shocks and struts','Control arms and bushings','Air suspension','Steering play and noise','Wheel alignment (tire wear)']],
+    ['Tires and wheels',['Front left tread','Front right tread','Rear left tread','Rear right tread','Tire age','Wheel damage']],
+    ['Body and paint',['Paint thickness readings','Panel gaps','Accident repair signs','Rust','Flood damage signs','Glass and lights']],
+    ['Interior and electrical',['Battery and charging','Air conditioning and heat','Windows, locks and mirrors','Infotainment and cameras','Seats and trim','Airbag system']],
+    ['Underside',['Oil leaks','Other fluid leaks','Frame and subframe','Exhaust system','Underbody damage']],
+    ['Road test',['Acceleration','Braking','Noises and vibrations','Steering and handling','Cruise and driver assists']]
+  ];
+  var KEY='eac-report-draft';
+  var host=document.getElementById('sections'),idx=0;
+  SECTIONS.forEach(function(s){
+    var h=document.createElement('h2');h.textContent=s[0];host.appendChild(h);
+    s[1].forEach(function(name){
+      var id='i'+(idx++),row=document.createElement('div');row.className='item';
+      row.innerHTML='<div class="name"></div><div class="pills">'+
+        ['ok:Good','watch:Watch','fix:Fix','na:N/A'].map(function(x){var p=x.split(':');return '<input type="radio" name="'+id+'" id="'+id+p[0]+'" value="'+p[1]+'" data-k="'+id+'"><label class="p-'+p[0]+'" for="'+id+p[0]+'">'+p[1]+'</label>';}).join('')+
+        '</div><div class="note"><input data-k="'+id+'n" placeholder="Note"></div>';
+      row.querySelector('.name').textContent=name;host.appendChild(row);
+    });
+  });
+
+  // Repair estimate rows
+  var rows=document.getElementById('estRows');
+  function addRow(d){
+    d=d||{};var tr=document.createElement('tr');
+    tr.innerHTML='<td><input class="r-n" placeholder="e.g. Front control arm bushings"></td><td class="pr"><select class="r-p"><option>Fix now</option><option>Soon</option><option>Can wait</option></select></td><td class="cost"><input class="r-c" inputmode="decimal" placeholder="$0"></td><td class="x noprint"><button class="rm" type="button" aria-label="Remove repair">×</button></td>';
+    tr.querySelector('.r-n').value=d.n||'';tr.querySelector('.r-p').value=d.p||'Fix now';tr.querySelector('.r-c').value=d.c||'';
+    tr.querySelector('.rm').onclick=function(){tr.remove();total();save();};
+    rows.appendChild(tr);
+  }
+  function money(v){return parseFloat(String(v).replace(/[^0-9.]/g,''))||0;}
+  function total(){var s=0;rows.querySelectorAll('.r-c').forEach(function(i){s+=money(i.value);});document.getElementById('estTotal').textContent='$'+s.toLocaleString('en-US',{maximumFractionDigits:2});return s;}
+  document.getElementById('addRow').onclick=function(){addRow();save();};
+
+  // Photos (resized so they fit the PDF and the saved draft)
+  var photos=document.getElementById('photos');
+  function addPhoto(src,cap){
+    var d=document.createElement('div');d.className='ph';
+    d.innerHTML='<img alt=""><button class="rm" type="button" aria-label="Remove photo">×</button><input placeholder="Caption">';
+    d.querySelector('img').src=src;d.querySelector('input').value=cap||'';
+    d.querySelector('.rm').onclick=function(){d.remove();save();};photos.appendChild(d);
+  }
+  document.getElementById('photoIn').addEventListener('change',function(e){
+    [].forEach.call(e.target.files,function(f){
+      var r=new FileReader();r.onload=function(){var im=new Image();im.onload=function(){
+        var s=Math.min(1,1200/Math.max(im.width,im.height)),c=document.createElement('canvas');c.width=im.width*s;c.height=im.height*s;
+        c.getContext('2d').drawImage(im,0,0,c.width,c.height);addPhoto(c.toDataURL('image/jpeg',.72));save();};im.src=r.result;};r.readAsDataURL(f);
+    });e.target.value='';
+  });
+
+  // Tally
+  function tally(){
+    var c={Good:0,Watch:0,Fix:0};document.querySelectorAll('.pills input:checked').forEach(function(i){if(c[i.value]!=null)c[i.value]++;});
+    document.getElementById('tally').innerHTML='<span class="g">'+c.Good+' good</span><span class="w">'+c.Watch+' to watch</span><span class="x">'+c.Fix+' to fix</span>';return c;
+  }
+
+  // Autosave to this device
+  function collect(){
+    var d={};document.querySelectorAll('[data-k]').forEach(function(el){var k=el.getAttribute('data-k');if(el.type==='radio'){if(el.checked)d[k]=el.value;}else d[k]=el.value;});
+    d._rows=[].map.call(rows.children,function(tr){return {n:tr.querySelector('.r-n').value,p:tr.querySelector('.r-p').value,c:tr.querySelector('.r-c').value};});
+    d._photos=[].map.call(photos.children,function(p){return {s:p.querySelector('img').src,c:p.querySelector('input').value};});
+    return d;
+  }
+  var st=document.getElementById('saved'),tmr;
+  function save(){tally();total();clearTimeout(tmr);tmr=setTimeout(function(){
+    try{localStorage.setItem(KEY,JSON.stringify(collect()));st.textContent='Saved on this device';}
+    catch(e){try{var d=collect();d._photos=[];localStorage.setItem(KEY,JSON.stringify(d));st.textContent='Saved (photos too large to keep after closing)';}catch(e2){st.textContent='Not saved: storage unavailable';}}
+  },300);}
+  function load(d){
+    document.querySelectorAll('[data-k]').forEach(function(el){var k=el.getAttribute('data-k');if(!(k in d))return;if(el.type==='radio')el.checked=(el.value===d[k]);else el.value=d[k];});
+    (d._rows||[]).forEach(addRow);(d._photos||[]).forEach(function(p){addPhoto(p.s,p.c);});
+  }
+  function fresh(){
+    var n=new Date(),pad=function(x){return ('0'+x).slice(-2);};
+    document.getElementById('repDate').value=n.getFullYear()+'-'+pad(n.getMonth()+1)+'-'+pad(n.getDate());
+    document.getElementById('repNo').value='EAC-'+String(n.getFullYear()).slice(2)+pad(n.getMonth()+1)+pad(n.getDate())+'-'+pad(n.getHours())+pad(n.getMinutes());
+    addRow();
+  }
+  var draft=null;try{draft=JSON.parse(localStorage.getItem(KEY)||'null');}catch(e){}
+  if(draft)load(draft);else fresh();
+  tally();total();
+  document.getElementById('sheet').addEventListener('input',save);
+  document.getElementById('sheet').addEventListener('change',save);
+  document.getElementById('newBtn').onclick=function(){
+    if(!confirm('Start a new report? This clears the current one from this device.'))return;
+    try{localStorage.removeItem(KEY);}catch(e){}location.reload();
+  };
+
+  // Short text summary to send the buyer with the PDF
+  document.getElementById('textBtn').onclick=function(){
+    var d=collect(),c=tally(),fixes=d._rows.filter(function(r){return r.n;}).map(function(r){return '- '+r.n+' ('+r.p.toLowerCase()+')'+(r.c?': $'+money(r.c):'');});
+    var msg=['European Auto Center inspection: '+[d.car,d.trim].filter(Boolean).join(' '),
+      'Result: '+(d.verdict||'see report'),c.Good+' good, '+c.Watch+' to watch, '+c.Fix+' to fix.',
+      d.summary||'',fixes.length?'Repairs:\n'+fixes.join('\n')+'\nEstimated total: '+document.getElementById('estTotal').textContent:'',
+      'Full report with photos attached. Questions? 682-553-6089'].filter(Boolean).join('\n');
+    var phone=String(d.phone||'').replace(/\D/g,'').slice(-10);
+    if(/Android|iPhone|iPad|iPod/i.test(navigator.userAgent)&&phone.length===10){location.href='sms:+1'+phone+'?&body='+encodeURIComponent(msg);}
+    else if(navigator.clipboard){navigator.clipboard.writeText(msg).then(function(){alert('Summary copied. Paste it into a text or email with the PDF.');});}
+    else{prompt('Copy this summary:',msg);}
+  };
+</script>
+</body>
+</html>

@@ -510,6 +510,7 @@
     <a class="btn btn-ink btn-block" id="smsBtn" href="#">Open text message</a>
     <button class="btn btn-line btn-block" type="button" id="copyBtn">Copy details</button>
     <button class="btn btn-ink btn-block" type="button" id="doneBtn" onclick="closeSend()" hidden>Done</button>
+    <p class="fine" id="emailNote" aria-live="polite"></p>
     <p class="fine" id="sendAlt">Rather talk? Call <a href="tel:+16825536089">682-553-6089</a>.</p>
   </div>
 </div>
@@ -519,8 +520,6 @@
   var SHOP_SMS='+16825536089';
   // Booking requests are emailed here (via FormSubmit). Change this one line to send them elsewhere.
   var SHOP_EMAIL='ziad@theautoplace.com';
-  // Phone alerts: install the free ntfy app and subscribe to this channel name. Keep it private.
-  var NTFY_TOPIC='eac-requests-b3747ed25d13';
   function val(id){var e=document.getElementById(id);return e?e.value.trim():'';}
   function go(e){
     e.preventDefault();
@@ -559,22 +558,25 @@
       var ok=function(){cb.textContent='✓ Copied';};
       if(navigator.clipboard&&navigator.clipboard.writeText)navigator.clipboard.writeText(msg).then(ok,function(){fallbackCopy(msg);ok();});else{fallbackCopy(msg);ok();}
     };
+    var first=escapeHtml(val('fname').split(' ')[0]||'there');
+    var depNote=mobile?' To hold an inspection at the seller we take a <b>$100 deposit</b>, credited to the $300. We\'ll text you how to pay it.':'';
+    var emailNote=$('emailNote');
     function show(state){
-      modal.hidden=false;
-      pre.hidden=state==='sending';done.hidden=state!=='sent';
-      if(state==='sending'){title.textContent='Sending your request…';sub.textContent='One moment.';sms.hidden=cb.hidden=alt.hidden=true;}
-      else if(state==='sent'){
-        title.textContent='✓ Request sent';
-        sub.innerHTML='Thanks, '+escapeHtml(val('fname').split(' ')[0]||'there')+'! Our team has your request and will call or text you at <b>'+escapeHtml(val('fphone'))+'</b> to confirm your appointment.'+(mobile?' To hold an inspection at the seller we take a <b>$100 deposit</b>, credited to the $300. We\'ll text you how to pay it.':'');
-        sms.hidden=cb.hidden=true;alt.hidden=false;
-      } else {
-        title.textContent="Let's send it by text instead";
-        sub.innerHTML=isPhone?"We couldn't send your request online. Tap below to text it to us with everything filled in, then press <b>Send</b>.":"We couldn't send your request online. Copy it and text it to <b>682-553-6089</b>, or give us a call at that number.";
-        sms.hidden=!isPhone;cb.hidden=false;alt.hidden=!isPhone;
+      modal.hidden=false;pre.hidden=false;
+      if(state==='text'){
+        // Step 1 on phones: the customer texts the request to the shop
+        title.textContent='Text your request to us';
+        sub.innerHTML='Tap the button to open your messages with everything filled in, then press <b>Send</b>. We reply by text to confirm your time.'+depNote;
+        sms.hidden=false;cb.hidden=true;done.hidden=false;done.textContent="I've sent the text";alt.hidden=false;
+      } else if(state==='copy'){
+        // Computers can't send texts: copy it, and the email copy still goes out
+        title.textContent='Request received';
+        sub.innerHTML='Thanks, '+first+'! Copy your request and text it to <b>682-553-6089</b> for the fastest reply, or we\'ll call or text you at <b>'+escapeHtml(val('fphone'))+'</b>.'+depNote;
+        sms.hidden=true;cb.hidden=false;done.hidden=false;done.textContent='Done';alt.hidden=true;
       }
     }
-    // Bots fill hidden fields; quietly pretend success.
-    if(val('fhoney')){show('sent');return false;}
+    function setEmail(s){if(emailNote)emailNote.textContent=s;}    // Bots fill hidden fields; quietly pretend success.
+    if(val('fhoney')){return false;}
     var payload={
       _subject:'New '+(diag?'diagnostic':'inspection')+' request: '+vehicle+' ('+svcShort+')',
       _template:'table',_captcha:'false',
@@ -585,20 +587,15 @@
       Seller:diag?'-':val('freason'),Details:val('fnotes')||'-'
     };
     if(val('femail'))payload._replyto=val('femail');
-    show('sending');btn.disabled=true;
-    function timed(ms){var c=('AbortController' in window)?new AbortController():null;var tm=setTimeout(function(){c&&c.abort();},ms);return {signal:c?c.signal:undefined,done:function(){clearTimeout(tm);}};}
-    // 1) Instant phone alert through ntfy (free app). Tapping the alert calls the customer.
-    var a=timed(10000),digits=val('fphone').replace(/\D/g,'');
-    var alertP=fetch('https://ntfy.sh/'+NTFY_TOPIC,{method:'POST',body:msg,signal:a.signal,headers:{
-        'Title':(diag?'Diagnostic':'Inspection')+' request: '+vehicle,
-        'Priority':'high','Tags':diag?'wrench':'car','Click':'tel:+1'+digits.slice(-10)}})
-      .then(function(r){a.done();return r.ok;}).catch(function(){a.done();return false;});
-    // 2) Email copy through FormSubmit
-    var e=timed(15000);
-    var mailP=fetch('https://formsubmit.co/ajax/'+SHOP_EMAIL,{method:'POST',headers:{'Content-Type':'application/json','Accept':'application/json'},body:JSON.stringify(payload),signal:e.signal})
-      .then(function(r){return r.json().then(function(j){e.done();return r.ok&&String(j.success)==='true';});})
-      .catch(function(){e.done();return false;});
-    Promise.all([alertP,mailP]).then(function(r){btn.disabled=false;show(r[0]||r[1]?'sent':'fallback');});
+    // 1) Text message first (customer's phone opens Messages, prefilled to the shop)
+    show(isPhone?'text':'copy');
+    // 2) Email copy in the background, so the request is never lost
+    setEmail('Also sending a copy by email…');
+    var c=('AbortController' in window)?new AbortController():null,tm=setTimeout(function(){c&&c.abort();},15000);
+    fetch('https://formsubmit.co/ajax/'+SHOP_EMAIL,{method:'POST',headers:{'Content-Type':'application/json','Accept':'application/json'},body:JSON.stringify(payload),signal:c?c.signal:undefined})
+      .then(function(r){return r.json().then(function(j){return r.ok&&String(j.success)==='true';});})
+      .catch(function(){return false;})
+      .then(function(ok){clearTimeout(tm);setEmail(ok?'✓ A copy was also emailed to the shop.':'The email copy didn\'t go through, so please send the text or call 682-553-6089.');});
     return false;
   }
   function escapeHtml(s){return String(s).replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];});}
