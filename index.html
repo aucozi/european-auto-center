@@ -291,7 +291,7 @@
             <input type="radio" name="svc2" id="b-shop" value="shop" checked>
             <label for="b-shop"><b>At our shop <em>$160</em></b><small>Bring the car to Alta Mere Dr</small></label>
             <input type="radio" name="svc2" id="b-mobile" value="mobile">
-            <label for="b-mobile"><b>At the seller <em>$300</em></b><small>Dealer or private seller. $100 deposit to book</small></label>
+            <label for="b-mobile"><b>At the seller <em>$300</em></b><small>Dealer or private seller. $150 deposit to book</small></label>
           </fieldset>
           <div class="field">
             <label class="lbl" for="vin"><span id="carLabel">The car you're buying</span> <i>(VIN fills it in for you)</i></label>
@@ -425,7 +425,7 @@
           <li>We can coordinate the time with the seller</li>
           <li>Report sent the same day</li>
           <li>Anywhere in Dallas–Fort Worth</li>
-          <li>$100 deposit to hold the appointment, credited to the $300</li>
+          <li>$150 deposit to hold the appointment, credited to the $300</li>
         </ul>
         <a class="btn btn-block" href="#book" data-svc="mobile">Book at the seller</a>
       </div>
@@ -475,7 +475,7 @@
       <details><summary>What's the difference between the shop and the seller option?</summary><p>Both include a full computer scan, a road test and a written report with photos. At our shop ($160) we also put the car on a lift. At the seller ($300) we go to the car, so you don't have to borrow it.</p></details>
       <details><summary>Will the seller let you inspect it?</summary><p>Most reputable dealers and private sellers do. If a seller refuses an inspection, that is worth knowing too. We can call the seller to set up a time.</p></details>
       <details><summary>How long does it take?</summary><p>About one to two hours. You get the report the same day.</p></details>
-      <details><summary>Why is there a deposit for inspections at the seller?</summary><p>We drive out and block time for your car, so a $100 deposit holds the appointment. It's credited toward the $300. When we text to confirm your time, we'll send how to pay it.</p></details>
+      <details><summary>Why is there a deposit for inspections at the seller?</summary><p>We drive out and block time for your car, so a $150 deposit holds the appointment. It's credited toward the $300. When we text to confirm your time, we'll send how to pay it.</p></details>
       <details><summary>How far do you travel?</summary><p>Anywhere in Dallas–Fort Worth. Not sure we reach you? Call or text <a href="tel:+16825536089">682-553-6089</a>.</p></details>
     </div>
   </div>
@@ -544,7 +544,7 @@
       dateTxt&&('Preferred date: '+dateTxt),
       mobile&&val('addr')&&('Car location: '+val('addr')),
       !diag&&('Seller: '+val('freason')),
-      mobile&&'Deposit: $100 needed to hold the appointment (send payment details)',
+      mobile&&'Deposit: $150 needed to hold the appointment (send payment details)',
       val('fnotes')&&('Details: '+val('fnotes'))
     ].filter(Boolean);
     var msg=lines.join('\n');
@@ -559,7 +559,7 @@
       if(navigator.clipboard&&navigator.clipboard.writeText)navigator.clipboard.writeText(msg).then(ok,function(){fallbackCopy(msg);ok();});else{fallbackCopy(msg);ok();}
     };
     var first=escapeHtml(val('fname').split(' ')[0]||'there');
-    var depNote=mobile?' To hold an inspection at the seller we take a <b>$100 deposit</b>, credited to the $300. We\'ll text you how to pay it.':'';
+    var depNote=mobile?' To hold an inspection at the seller we take a <b>$150 deposit</b>, credited to the $300. We\'ll text you how to pay it.':'';
     var emailNote=$('emailNote');
     function show(state){
       modal.hidden=false;pre.hidden=false;
