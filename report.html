@@ -160,7 +160,7 @@
   </div>
 
   <footer class="f">
-    <span>European Auto Center · 3129 Alta Mere Dr, Fort Worth, TX 76116 · 682-553-6089</span>
+    <span>European Auto Center · 3129 Alta Mere Dr, Fort Worth, TX 76116 · 682-553-6607</span>
     <span>This report reflects the vehicle's condition at the time of inspection.</span>
   </footer>
 </main>
@@ -264,7 +264,7 @@
     var msg=['European Auto Center inspection: '+[d.car,d.trim].filter(Boolean).join(' '),
       'Result: '+(d.verdict||'see report'),c.Good+' good, '+c.Watch+' to watch, '+c.Fix+' to fix.',
       d.summary||'',fixes.length?'Repairs:\n'+fixes.join('\n')+'\nEstimated total: '+document.getElementById('estTotal').textContent:'',
-      'Full report with photos attached. Questions? 682-553-6089'].filter(Boolean).join('\n');
+      'Full report with photos attached. Questions? 682-553-6607'].filter(Boolean).join('\n');
     var phone=String(d.phone||'').replace(/\D/g,'').slice(-10);
     if(/Android|iPhone|iPad|iPod/i.test(navigator.userAgent)&&phone.length===10){location.href='sms:+1'+phone+'?&body='+encodeURIComponent(msg);}
     else if(navigator.clipboard){navigator.clipboard.writeText(msg).then(function(){alert('Summary copied. Paste it into a text or email with the PDF.');});}
