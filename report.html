@@ -34,7 +34,14 @@
   label.f{display:block;font-size:13px;font-weight:600;color:var(--steel)}
   label.f input,label.f select,textarea{display:block;width:100%;margin-top:4px;min-height:40px;padding:8px 10px;border:1.5px solid var(--line);border-radius:6px;font:400 15px Archivo,sans-serif;color:var(--ink);background:#fff}
   textarea{min-height:70px;resize:vertical}
-  .scan{float:right;border:1.5px solid var(--ink);background:var(--canary);border-radius:999px;padding:2px 12px;font:700 12px Archivo,sans-serif;cursor:pointer}
+  .vinbox{grid-column:span 2}
+  .vinbox label.f{font-size:13px;font-weight:600;color:var(--steel)}
+  .vinrow{display:flex;gap:8px;margin-top:4px}
+  .vinrow input{flex:1;min-width:0;min-height:44px;padding:8px 10px;border:1.5px solid var(--line);border-radius:6px;font:400 16px Archivo,sans-serif;letter-spacing:.5px;text-transform:uppercase;color:var(--ink)}
+  .scan{flex:none;min-height:44px;padding:0 16px;border:2px solid var(--ink);background:var(--canary);color:var(--ink);border-radius:8px;font:700 15px Archivo,sans-serif;cursor:pointer}
+  @media (max-width:700px){.vinbox{grid-column:1/-1}}
+  /* iPhone zooms into any field under 16px: keep every field at 16px on phones */
+  @media (max-width:900px){input,select,textarea{font-size:16px !important}}
   #vinMsg{display:block;font-size:12.5px;margin-top:4px}
   .cam{position:fixed;inset:0;z-index:50;background:#000;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;padding:16px}
   .cam video{width:100%;max-width:640px;border-radius:8px}
@@ -85,7 +92,7 @@
     .pills input:checked+label{display:inline-block;padding:2px 8px}
     .item{padding:5px 0;break-inside:avoid}
     .item .note input:placeholder-shown{display:none}
-    label.f input,label.f select,textarea{border:0;padding:0;min-height:0;margin-top:0;font-weight:600}
+    label.f input,label.f select,textarea,.vinrow input{border:0;padding:0;min-height:0;margin-top:0;font-weight:600}
     textarea{resize:none;overflow:visible}
     h2{break-after:avoid;margin-top:16px;font-size:19px}
     .verdict input:not(:checked)+label{display:none}
@@ -119,12 +126,12 @@
 
   <h2 style="border:0;padding:0;margin-top:0">Vehicle and customer</h2>
   <div class="grid">
+    <div class="f vinbox"><label class="f" for="vinIn">VIN</label><div class="vinrow"><input data-k="vin" id="vinIn" autocapitalize="characters" autocorrect="off" spellcheck="false" placeholder="17 characters"><button type="button" class="scan noprint" id="scanBtn">Scan VIN</button></div><small id="vinMsg" class="noprint"></small></div>
     <label class="f">Customer<input data-k="cust"></label>
     <label class="f">Customer phone<input data-k="phone" inputmode="tel"></label>
     <label class="f">Inspection<select data-k="where"><option>At our shop ($160)</option><option>At the seller ($300)</option></select></label>
     <label class="f">Year, make, model<input data-k="car" placeholder="2015 Mercedes-Benz E-Class"></label>
     <label class="f">Version / engine<input data-k="trim" placeholder="E63 S AMG, 5.5L"></label>
-    <label class="f">VIN <button type="button" class="scan noprint" id="scanBtn">Scan</button><input data-k="vin" id="vinIn" autocapitalize="characters" spellcheck="false"><small id="vinMsg" class="noprint"></small></label>
     <label class="f">Mileage<input data-k="miles" inputmode="numeric"></label>
     <label class="f">Color<input data-k="color"></label>
     <label class="f">Seller / location<input data-k="seller"></label>
