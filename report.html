@@ -34,6 +34,11 @@
   label.f{display:block;font-size:13px;font-weight:600;color:var(--steel)}
   label.f input,label.f select,textarea{display:block;width:100%;margin-top:4px;min-height:40px;padding:8px 10px;border:1.5px solid var(--line);border-radius:6px;font:400 15px Archivo,sans-serif;color:var(--ink);background:#fff}
   textarea{min-height:70px;resize:vertical}
+  .scan{float:right;border:1.5px solid var(--ink);background:var(--canary);border-radius:999px;padding:2px 12px;font:700 12px Archivo,sans-serif;cursor:pointer}
+  #vinMsg{display:block;font-size:12.5px;margin-top:4px}
+  .cam{position:fixed;inset:0;z-index:50;background:#000;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;padding:16px}
+  .cam video{width:100%;max-width:640px;border-radius:8px}
+  .cam p{color:#fff;margin:0;text-align:center}
   .verdict{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:12px}
   .verdict input{position:absolute;opacity:0}
   .verdict label{display:block;text-align:center;padding:12px 8px;border:2px solid var(--line);border-radius:8px;font-weight:700;cursor:pointer}
@@ -119,7 +124,7 @@
     <label class="f">Inspection<select data-k="where"><option>At our shop ($160)</option><option>At the seller ($300)</option></select></label>
     <label class="f">Year, make, model<input data-k="car" placeholder="2015 Mercedes-Benz E-Class"></label>
     <label class="f">Version / engine<input data-k="trim" placeholder="E63 S AMG, 5.5L"></label>
-    <label class="f">VIN<input data-k="vin" maxlength="17" style="text-transform:uppercase"></label>
+    <label class="f">VIN <button type="button" class="scan noprint" id="scanBtn">Scan</button><input data-k="vin" id="vinIn" autocapitalize="characters" spellcheck="false"><small id="vinMsg" class="noprint"></small></label>
     <label class="f">Mileage<input data-k="miles" inputmode="numeric"></label>
     <label class="f">Color<input data-k="color"></label>
     <label class="f">Seller / location<input data-k="seller"></label>
@@ -164,6 +169,7 @@
     <span>This report reflects the vehicle's condition at the time of inspection.</span>
   </footer>
 </main>
+<div class="cam" id="cam" hidden><p>Point at the VIN barcode (door jamb or windshield)</p><video id="camVid" playsinline muted></video><button class="btn btn-y" type="button" id="camClose">Cancel</button></div>
 
 <script>
   var SECTIONS=[
@@ -256,6 +262,36 @@
   document.getElementById('newBtn').onclick=function(){
     if(!confirm('Start a new report? This clears the current one from this device.'))return;
     try{localStorage.removeItem(KEY);}catch(e){}location.reload();
+  };
+
+  // VIN: scan the barcode with the camera, then decode it (free NHTSA lookup) to fill car and engine
+  var vinIn=document.getElementById('vinIn'),vinMsg=document.getElementById('vinMsg'),cam=document.getElementById('cam'),camVid=document.getElementById('camVid'),scanCtl=null;
+  function decodeVin(v){
+    v=v.toUpperCase().replace(/[^A-Z0-9]/g,'');if(v.length===18&&v[0]==='I')v=v.slice(1);// some door-jamb barcodes add a leading I
+    vinIn.value=v;if(v.length!==17){vinMsg.textContent=v.length?(17-v.length)+' characters to go':'';return;}
+    vinMsg.textContent='Looking up…';
+    fetch('https://vpic.nhtsa.dot.gov/api/vehicles/DecodeVinValues/'+v+'?format=json').then(function(r){return r.json();}).then(function(d){
+      var r=(d.Results||[])[0]||{};if(!r.Make){vinMsg.textContent="Couldn't decode this VIN. Fill in the car by hand.";return;}
+      var car=document.querySelector('[data-k=car]'),trim=document.querySelector('[data-k=trim]');
+      var mk=r.Make.charAt(0)+r.Make.slice(1).toLowerCase();
+      if(!car.value)car.value=[r.ModelYear,mk,r.Model].filter(Boolean).join(' ');
+      if(!trim.value)trim.value=[r.Trim||r.Series,r.DisplacementL?parseFloat(r.DisplacementL).toFixed(1)+'L':''].filter(Boolean).join(', ');
+      vinMsg.textContent='✓ '+[r.ModelYear,mk,r.Model,r.Trim].filter(Boolean).join(' ');save();
+    }).catch(function(){vinMsg.textContent='VIN lookup unavailable. Fill in the car by hand.';});
+  }
+  vinIn.addEventListener('change',function(){decodeVin(vinIn.value);});
+  function stopScan(){try{scanCtl&&scanCtl.stop();}catch(e){}scanCtl=null;cam.hidden=true;}
+  document.getElementById('camClose').onclick=stopScan;
+  document.getElementById('scanBtn').onclick=function(){
+    function start(){
+      cam.hidden=false;
+      new ZXingBrowser.BrowserMultiFormatReader().decodeFromVideoDevice(undefined,camVid,function(res,err,ctl){
+        scanCtl=ctl;if(res){stopScan();decodeVin(res.getText());}
+      }).then(function(c){scanCtl=c;}).catch(function(){stopScan();vinMsg.textContent='Camera not available. Type the VIN instead.';});
+    }
+    if(window.ZXingBrowser)return start();
+    var s=document.createElement('script');s.src='https://unpkg.com/@zxing/browser@0.1.5/umd/zxing-browser.min.js';
+    s.onload=start;s.onerror=function(){vinMsg.textContent="Scanner couldn't load. Type the VIN instead.";};document.head.appendChild(s);
   };
 
   // Short text summary to send the buyer with the PDF
