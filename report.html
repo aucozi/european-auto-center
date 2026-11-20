@@ -44,7 +44,7 @@
   @media (max-width:900px){input,select,textarea{font-size:16px !important}}
   #vinMsg{display:block;font-size:12.5px;margin-top:4px}
   .cam{position:fixed;inset:0;z-index:50;background:#000;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;padding:16px}
-  .cam video{width:100%;max-width:640px;border-radius:8px}
+  .cam video{width:100%;max-width:640px;border-radius:8px;border:3px solid var(--canary)}
   .cam p{color:#fff;margin:0;text-align:center}
   .verdict{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:12px}
   .verdict input{position:absolute;opacity:0}
@@ -176,7 +176,7 @@
     <span>This report reflects the vehicle's condition at the time of inspection.</span>
   </footer>
 </main>
-<div class="cam" id="cam" hidden><p>Point at the VIN barcode (door jamb or windshield)</p><video id="camVid" playsinline muted></video><button class="btn btn-y" type="button" id="camClose">Cancel</button></div>
+<div class="cam" id="cam" hidden><p>Fill the frame with the VIN barcode on the driver door jamb. Hold steady about 4–6 inches away.</p><video id="camVid" playsinline muted></video><button class="btn btn-y" type="button" id="camClose">Cancel</button></div>
 
 <script>
   var SECTIONS=[
@@ -292,8 +292,15 @@
   document.getElementById('scanBtn').onclick=function(){
     function start(){
       cam.hidden=false;
-      new ZXingBrowser.BrowserMultiFormatReader().decodeFromVideoDevice(undefined,camVid,function(res,err,ctl){
-        scanCtl=ctl;if(res){stopScan();decodeVin(res.getText());}
+      var F=ZXingBrowser.BarcodeFormat;
+      // 2 = POSSIBLE_FORMATS, 3 = TRY_HARDER. VINs are Code 39 (door jamb) or Data Matrix / QR (windshield, newer cars)
+      var hints=new Map([[2,[F.CODE_39,F.CODE_128,F.DATA_MATRIX,F.QR_CODE]],[3,true]]);
+      new ZXingBrowser.BrowserMultiFormatReader(hints).decodeFromConstraints(
+        {video:{facingMode:{ideal:'environment'},width:{ideal:1920},height:{ideal:1080}}},camVid,function(res,err,ctl){
+        scanCtl=ctl;if(!res)return;
+        var v=res.getText().toUpperCase().replace(/[^A-Z0-9]/g,'');if(v.length===18&&v[0]==='I')v=v.slice(1);
+        if(v.length!==17)return;// keep scanning until it's a real VIN, not some other barcode
+        stopScan();decodeVin(v);
       }).then(function(c){scanCtl=c;}).catch(function(){stopScan();vinMsg.textContent='Camera not available. Type the VIN instead.';});
     }
     if(window.ZXingBrowser)return start();
