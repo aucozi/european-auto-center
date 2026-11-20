@@ -273,7 +273,7 @@
     fetch('https://vpic.nhtsa.dot.gov/api/vehicles/DecodeVinValues/'+v+'?format=json').then(function(r){return r.json();}).then(function(d){
       var r=(d.Results||[])[0]||{};if(!r.Make){vinMsg.textContent="Couldn't decode this VIN. Fill in the car by hand.";return;}
       var car=document.querySelector('[data-k=car]'),trim=document.querySelector('[data-k=trim]');
-      var mk=r.Make.charAt(0)+r.Make.slice(1).toLowerCase();
+      var mk=r.Make.length<=3?r.Make:r.Make.toLowerCase().replace(/(^|[\s-])\w/g,function(c){return c.toUpperCase();});
       if(!car.value)car.value=[r.ModelYear,mk,r.Model].filter(Boolean).join(' ');
       if(!trim.value)trim.value=[r.Trim||r.Series,r.DisplacementL?parseFloat(r.DisplacementL).toFixed(1)+'L':''].filter(Boolean).join(', ');
       vinMsg.textContent='✓ '+[r.ModelYear,mk,r.Model,r.Trim].filter(Boolean).join(' ');save();
