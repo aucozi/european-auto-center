@@ -126,7 +126,7 @@
 
   <h2 style="border:0;padding:0;margin-top:0">Vehicle and customer</h2>
   <div class="grid">
-    <div class="f vinbox"><label class="f" for="vinIn">VIN</label><div class="vinrow"><input data-k="vin" id="vinIn" autocapitalize="characters" autocorrect="off" spellcheck="false" placeholder="17 characters"><button type="button" class="scan noprint" id="scanBtn">Scan VIN</button></div><small id="vinMsg" class="noprint"></small></div>
+    <div class="f vinbox"><label class="f" for="vinIn">VIN</label><div class="vinrow"><input data-k="vin" id="vinIn" autocapitalize="characters" autocorrect="off" spellcheck="false" placeholder="17 characters"><button type="button" class="scan noprint" id="scanBtn">Scan VIN</button></div><small id="vinMsg" class="noprint">No barcode? On iPhone, tap the VIN box, then <b>Scan Text</b> and point at the printed VIN.</small></div>
     <label class="f">Customer<input data-k="cust"></label>
     <label class="f">Customer phone<input data-k="phone" inputmode="tel"></label>
     <label class="f">Inspection<select data-k="where"><option>At our shop ($160)</option><option>At the seller ($300)</option></select></label>
@@ -287,6 +287,8 @@
     }).catch(function(){vinMsg.textContent='VIN lookup unavailable. Fill in the car by hand.';});
   }
   vinIn.addEventListener('change',function(){decodeVin(vinIn.value);});
+  // iPhone "Scan Text" (Live Text) types the whole VIN at once: decode as soon as 17 characters arrive
+  vinIn.addEventListener('input',function(){var v=vinIn.value.toUpperCase().replace(/[^A-Z0-9]/g,'');if(v.length===17)decodeVin(v);});
   // Camera scanning with zxing-cpp (WebAssembly): fast, reads sideways/upside down and tilted barcodes
   var scanning=false,stream=null,cv=document.createElement('canvas'),cx=cv.getContext('2d',{willReadFrequently:true});
   var ANGLES=[0,20,-20,40,-40];// tryRotate covers 90/180/270; these cover tilt in between
