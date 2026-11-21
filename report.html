@@ -69,6 +69,20 @@
     .pills label:first-of-type{border-left:0}
   }
   .tally{display:flex;gap:16px;font-weight:700;margin:6px 0 0}
+  .acts{display:flex;gap:8px}
+  details.sec{border-top:1px solid var(--line);margin-top:8px}
+  details.sec>summary{list-style:none;display:flex;align-items:center;gap:12px;cursor:pointer;padding:14px 0}
+  details.sec>summary::-webkit-details-marker{display:none}
+  details.sec>summary h2{margin:0;padding:0;border:0;flex:1}
+  details.sec>summary::after{content:"";width:10px;height:10px;border-right:2px solid var(--ink);border-bottom:2px solid var(--ink);transform:rotate(45deg);margin:0 6px 4px}
+  details.sec[open]>summary::after{transform:rotate(-135deg);margin-bottom:-4px}
+  .prog{font-weight:700;font-size:14px;color:var(--steel);background:var(--paper);border-radius:999px;padding:4px 10px}
+  .prog.done{background:#e2f3e8;color:var(--ok)}.prog.done.watch{background:#fbf1c7;color:var(--watch)}.prog.done.fix{background:#f9e0de;color:var(--fix)}
+  .allgood{border:1.5px solid var(--ok);color:var(--ok);background:#fff;border-radius:999px;padding:6px 14px;font:700 14px Archivo,sans-serif;cursor:pointer;margin-bottom:6px}
+  /* notes appear only when an item needs one */
+  .item .note{display:none}
+  .item:has(input[value=Watch]:checked) .note,.item:has(input[value=Fix]:checked) .note,.item:has(.note input:not(:placeholder-shown)) .note{display:block}
+  .addph{cursor:pointer}
   .tally .g{color:var(--ok)}.tally .w{color:var(--watch)}.tally .x{color:var(--fix)}
   table.est{width:100%;border-collapse:collapse}
   table.est th{text-align:left;font-size:13px;color:var(--steel);border-bottom:2px solid var(--ink);padding:6px 4px}
@@ -86,12 +100,36 @@
   .sign{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:10px}
   footer.f{margin-top:30px;padding-top:14px;border-top:3px solid var(--ink);display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;font-size:13px;color:var(--steel)}
   .saved{font-size:12.5px;color:#b7c0cf}
+  @media (max-width:700px){
+    body{padding-bottom:calc(76px + env(safe-area-inset-bottom))}
+    .bar .in{padding:8px 16px}
+    .bar .acts{position:fixed;left:0;right:0;bottom:0;z-index:20;background:var(--ink);padding:10px 16px calc(10px + env(safe-area-inset-bottom));box-shadow:0 -6px 20px rgba(0,0,0,.2)}
+    .bar .acts .btn{flex:1;min-height:50px;font-size:16px}
+    .grid{grid-template-columns:1fr !important}.sign{grid-template-columns:1fr}
+    label.f input,label.f select,textarea{min-height:48px}
+    .verdict{grid-template-columns:1fr}.verdict label{padding:14px;text-align:left}
+    .allgood{width:100%;min-height:44px}
+    .item .note input{min-height:40px}
+    table.est,table.est tbody,table.est tfoot,table.est tr,table.est td{display:block;width:100% !important}
+    table.est thead{display:none}
+    table.est tbody tr{display:grid;grid-template-columns:1fr 110px 36px;gap:6px;border:1.5px solid var(--line);border-radius:10px;padding:8px;margin-bottom:8px}
+    table.est tbody tr td{border:0;padding:0}
+    table.est tbody tr td:first-child{grid-column:1/-1}
+    table.est input,table.est select{min-height:44px;border:1.5px solid var(--line);border-radius:8px;padding:8px 10px}
+    table.est tfoot tr{display:flex;justify-content:space-between}
+    #addRow,.addph{width:100%;min-height:48px}
+  }
   @media (max-width:700px){.sheet{padding:20px;margin:0;border-radius:0;border:0}.grid{grid-template-columns:1fr 1fr}.grid.two{grid-template-columns:1fr}.photos{grid-template-columns:1fr 1fr}h1{font-size:32px}header.top img{width:84px}.item{grid-template-columns:1fr}}
   @media print{
     @page{size:letter;margin:12mm}
     body{background:#fff;font-size:12.5px}
     .bar,.noprint,.rm{display:none !important}
     .sheet{border:0;margin:0;padding:0;max-width:none}
+    details.sec>summary::after,.prog{display:none}
+    .item .note{display:block}
+    details.sec{margin-top:0}details.sec>summary{padding:6px 0}
+    footer.f{margin-top:10px;break-inside:avoid;break-before:avoid}
+    .sign{margin-top:4px}
     .pills label{display:none}
     .pills input:checked+label{display:inline-block;padding:2px 8px}
     .item{padding:5px 0;break-inside:avoid}
@@ -114,9 +152,9 @@
 
 <div class="bar"><div class="in">
   <b>Inspection report<small class="saved" id="saved">Saved on this device</small></b>
-  <button class="btn btn-o" type="button" id="newBtn">New report</button>
-  <button class="btn btn-o" type="button" id="textBtn">Text summary</button>
-  <button class="btn btn-y" type="button" onclick="window.print()">Save as PDF</button>
+  <button class="btn btn-o" type="button" id="newBtn">New</button>
+  <div class="acts"><button class="btn btn-o" type="button" id="textBtn">Text summary</button>
+  <button class="btn btn-y" type="button" onclick="window.print()">Save as PDF</button></div>
 </div></div>
 
 <main class="sheet" id="sheet">
@@ -166,7 +204,7 @@
 
   <h2>Photos</h2>
   <p class="hint noprint">Add photos of anything worth showing: leaks, damage, worn parts, the dash with codes.</p>
-  <input class="noprint" type="file" id="photoIn" accept="image/*" multiple>
+  <label class="btn btn-d noprint addph"><input type="file" id="photoIn" accept="image/*" multiple hidden>Add photos</label>
   <div class="photos" id="photos" style="margin-top:12px"></div>
 
   <h2>Inspector</h2>
@@ -196,14 +234,17 @@
   ];
   var KEY='eac-report-draft';
   var host=document.getElementById('sections'),idx=0;
-  SECTIONS.forEach(function(s){
-    var h=document.createElement('h2');h.textContent=s[0];host.appendChild(h);
+  SECTIONS.forEach(function(s,si){
+    var sec=document.createElement('details');sec.className='sec';sec.open=si===0;
+    sec.innerHTML='<summary><h2></h2><span class="prog">0/'+s[1].length+'</span></summary><button type="button" class="allgood noprint">Mark all Good</button>';
+    sec.querySelector('h2').textContent=s[0];host.appendChild(sec);
+    sec.querySelector('.allgood').onclick=function(){sec.querySelectorAll('.pills input[value=Good]').forEach(function(i){var g=i.closest('.pills').querySelector('input:checked');if(!g)i.checked=true;});save();};
     s[1].forEach(function(name){
       var id='i'+(idx++),row=document.createElement('div');row.className='item';
       row.innerHTML='<div class="name"></div><div class="pills">'+
         ['ok:Good','watch:Watch','fix:Fix','na:N/A'].map(function(x){var p=x.split(':');return '<input type="radio" name="'+id+'" id="'+id+p[0]+'" value="'+p[1]+'" data-k="'+id+'"><label class="p-'+p[0]+'" for="'+id+p[0]+'">'+p[1]+'</label>';}).join('')+
         '</div><div class="note"><input data-k="'+id+'n" placeholder="Note"></div>';
-      row.querySelector('.name').textContent=name;host.appendChild(row);
+      row.querySelector('.name').textContent=name;sec.appendChild(row);
     });
   });
 
@@ -239,6 +280,7 @@
   // Tally
   function tally(){
     var c={Good:0,Watch:0,Fix:0};document.querySelectorAll('.pills input:checked').forEach(function(i){if(c[i.value]!=null)c[i.value]++;});
+    document.querySelectorAll('details.sec').forEach(function(d){var n=d.querySelectorAll('.item').length,k=d.querySelectorAll('.pills input:checked').length,f=d.querySelector('.pills input[value=Fix]:checked'),w=d.querySelector('.pills input[value=Watch]:checked'),pr=d.querySelector('.prog');pr.textContent=k+'/'+n;pr.className='prog'+(k===n?' done':'')+(f?' fix':w?' watch':'');});
     document.getElementById('tally').innerHTML='<span class="g">'+c.Good+' good</span><span class="w">'+c.Watch+' to watch</span><span class="x">'+c.Fix+' to fix</span>';return c;
   }
 
@@ -293,6 +335,8 @@
   // iPhone "Scan Text" (Live Text) types the whole VIN at once: decode as soon as 17 characters arrive
   vinIn.addEventListener('input',function(){var v=vinIn.value.toUpperCase().replace(/[^A-Z0-9]/g,'');if(v.length===17)decodeVin(v);});
   document.getElementById('scanBtn').onclick=function(){scanVin(decodeVin,function(m){vinMsg.textContent=m;});};
+
+  window.addEventListener('beforeprint',function(){document.querySelectorAll('details.sec').forEach(function(d){d.open=true;});});
 
   // Short text summary to send the buyer with the PDF
   document.getElementById('textBtn').onclick=function(){
