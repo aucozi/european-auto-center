@@ -26,8 +26,9 @@
   header.top{display:flex;justify-content:space-between;align-items:flex-start;gap:20px;border-bottom:3px solid var(--ink);padding-bottom:18px;margin-bottom:22px}
   header.top img{width:120px}
   h1{font-variation-settings:"wdth" 68;font-weight:800;font-size:40px;line-height:1;margin:0 0 6px}
-  .meta{color:var(--steel);font-size:14px}
-  .meta input{border:0;border-bottom:1px dashed var(--line);font:inherit;color:var(--ink);width:110px;padding:0}
+  .meta{display:grid;grid-template-columns:1.3fr 1fr;gap:10px;margin-top:12px;max-width:380px}
+  .meta input{-webkit-appearance:none;appearance:none;min-width:0;text-align:left}
+  @media (max-width:700px){header.top>div{flex:1;min-width:0}.meta{grid-template-columns:1fr;max-width:none;gap:8px}}
   h2{font-variation-settings:"wdth" 68;font-weight:800;font-size:24px;margin:30px 0 12px;padding-top:14px;border-top:1px solid var(--line)}
   .grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px 16px}
   .grid.two{grid-template-columns:1fr 1fr}
@@ -147,7 +148,8 @@
     #sections h2{break-inside:avoid;column-span:none;margin-top:12px;padding-top:8px}
     .item{grid-template-columns:1fr auto;gap:2px 8px}
     select{appearance:none;-webkit-appearance:none;background:none}
-    .meta input{width:auto}
+    .meta{grid-template-columns:auto auto;gap:24px;margin-top:6px}
+    input[type=date]::-webkit-calendar-picker-indicator{display:none}
   }
 </style>
 </head>
@@ -164,7 +166,7 @@
   <header class="top">
     <div>
       <h1>Pre-purchase inspection report</h1>
-      <div class="meta">Report no. <input data-k="no" id="repNo" style="width:170px"> &nbsp; Date <input type="date" data-k="date" id="repDate" style="width:140px"></div>
+      <div class="meta"><label class="f">Report no.<input data-k="no" id="repNo"></label><label class="f">Date<input type="date" data-k="date" id="repDate"></label></div>
     </div>
     <img src="images/logo.svg" alt="European Auto Center">
   </header>
