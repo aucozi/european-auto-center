@@ -12,7 +12,7 @@
     ov=document.createElement('div');
     ov.setAttribute('role','dialog');ov.setAttribute('aria-label','Scan VIN barcode');
     ov.style.cssText='position:fixed;top:0;left:0;right:0;height:100dvh;z-index:300;background:#000;display:none;flex-direction:column;align-items:center;gap:12px;padding:max(12px,env(safe-area-inset-top)) 16px max(16px,env(safe-area-inset-bottom));box-sizing:border-box;font-family:inherit';
-    ov.innerHTML='<p style="flex:none;color:#fff;margin:0;text-align:center;font-size:16px">Point at the VIN barcode on the door jamb or windshield. Any angle works.</p>'+
+    ov.innerHTML='<p style="flex:none;color:#fff;margin:0;text-align:center;font-size:16px">Point at the VIN barcode on the door jamb or windshield.</p>'+
       '<video playsinline muted style="flex:1 1 auto;min-height:0;width:100%;max-width:640px;object-fit:cover;border-radius:8px;border:3px solid #F3DC6B"></video>'+
       '<div style="flex:none;display:flex;gap:10px">'+
       '<button type="button" data-t hidden style="min-height:44px;padding:0 18px;border-radius:999px;border:2px solid #56627c;background:transparent;color:#fff;font:700 15px inherit">Flash on</button>'+
