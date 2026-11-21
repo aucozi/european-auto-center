@@ -127,7 +127,7 @@
   @media print{
     @page{size:letter;margin:12mm}
     body{background:#fff;font-size:12.5px}
-    .bar,.noprint,.rm{display:none !important}
+    .bar,.noprint,.rm,.pdf-hide{display:none !important}
     .sheet{border:0;margin:0;padding:0;max-width:none}
     details.sec>summary::after,.prog{display:none}
     .item .note{display:block}
@@ -144,7 +144,8 @@
     .verdict input:not(:checked)+label{display:none}
     .verdict{grid-template-columns:1fr}
     *{-webkit-print-color-adjust:exact;print-color-adjust:exact}
-    #sections{columns:2;column-gap:28px}
+    #sections.cols{columns:2;column-gap:28px}
+    table.est input,table.est select{border:0 !important;outline:0;box-shadow:none}
     #sections h2{break-inside:avoid;column-span:none;margin-top:12px;padding-top:8px}
     .item{grid-template-columns:1fr auto;gap:2px 8px}
     select{appearance:none;-webkit-appearance:none;background:none}
@@ -343,7 +344,28 @@
   vinIn.addEventListener('input',function(){var v=vinIn.value.toUpperCase().replace(/[^A-Z0-9]/g,'');if(v.length===17)decodeVin(v);});
   document.getElementById('scanBtn').onclick=function(){scanVin(decodeVin,function(m){vinMsg.textContent=m;});};
 
-  window.addEventListener('beforeprint',function(){document.querySelectorAll('details.sec').forEach(function(d){d.open=true;});});
+  // PDF only: hide anything left empty (the form on screen is unchanged)
+  function blank(el){return !el||!String(el.value||'').trim();}
+  function block(h2text){var h=[].filter.call(document.querySelectorAll('#sheet > h2'),function(x){return x.textContent.trim()===h2text;})[0],out=[];
+    for(var e=h;e&&!(e!==h&&(e.tagName==='H2'||e.tagName==='FOOTER'));e=e.nextElementSibling)out.push(e);return out;}
+  function hide(list){list.forEach(function(e){if(e)e.classList.add('pdf-hide');});}
+  window.addEventListener('beforeprint',function(){
+    document.querySelectorAll('details.sec').forEach(function(d){d.open=true;});
+    document.querySelectorAll('#sheet label.f').forEach(function(l){var i=l.querySelector('input:not([type=radio]):not([type=file]),textarea');if(i&&blank(i))hide([l]);});
+    if(blank(document.getElementById('vinIn')))hide([document.querySelector('.vinbox')]);
+    var codes=document.getElementById('codesBlock');if(blank(document.getElementById('codesIn')))hide([codes]);
+    document.querySelectorAll('.item').forEach(function(it){if(!it.querySelector('.pills input:checked'))hide([it]);});
+    document.querySelectorAll('details.sec').forEach(function(d){var codesShown=d.contains(codes)&&!codes.classList.contains('pdf-hide');if(!d.querySelector('.item:not(.pdf-hide)')&&!codesShown)hide([d]);});
+    if(!document.querySelector('.verdict input:checked'))hide([document.querySelector('.verdict')]);
+    if(!document.querySelector('.pills input:checked'))hide([document.getElementById('tally')]);
+    if(!document.querySelector('.verdict input:checked')&&blank(document.querySelector('[data-k=summary]'))&&!document.querySelector('.pills input:checked'))hide(block('Overall result'));
+    if(![].some.call(document.querySelectorAll('#estRows .r-n'),function(i){return !blank(i);}))hide(block('Repair estimate'));
+    document.querySelectorAll('#estRows tr').forEach(function(tr){if(blank(tr.querySelector('.r-n'))&&blank(tr.querySelector('.r-c')))hide([tr]);});
+    if(!photos.children.length)hide(block('Photos'));
+    document.getElementById('sections').classList.toggle('cols',document.querySelectorAll('.item:not(.pdf-hide)').length>14);
+    if(blank(document.querySelector('[data-k=tech]'))&&blank(document.querySelector('[data-k=technote]')))hide(block('Inspector'));
+  });
+  window.addEventListener('afterprint',function(){document.querySelectorAll('.pdf-hide').forEach(function(e){e.classList.remove('pdf-hide');});});
 
   // Short text summary to send the buyer with the PDF
   document.getElementById('textBtn').onclick=function(){
