@@ -43,9 +43,6 @@
   /* iPhone zooms into any field under 16px: keep every field at 16px on phones */
   @media (max-width:900px){input,select,textarea{font-size:16px !important}}
   #vinMsg{display:block;font-size:12.5px;margin-top:4px}
-  .cam{position:fixed;inset:0;z-index:50;background:#000;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;padding:16px}
-  .cam video{width:100%;max-width:640px;border-radius:8px;border:3px solid var(--canary)}
-  .cam p{color:#fff;margin:0;text-align:center}
   .verdict{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:12px}
   .verdict input{position:absolute;opacity:0}
   .verdict label{display:block;text-align:center;padding:12px 8px;border:2px solid var(--line);border-radius:8px;font-weight:700;cursor:pointer}
@@ -176,7 +173,6 @@
     <span>This report reflects the vehicle's condition at the time of inspection.</span>
   </footer>
 </main>
-<div class="cam" id="cam" hidden><p>Point at the VIN barcode on the door jamb or windshield. Any angle works.</p><video id="camVid" playsinline muted></video><button class="btn btn-o" type="button" id="torchBtn" hidden>Flash on</button><button class="btn btn-y" type="button" id="camClose">Cancel</button></div>
 
 <script>
   var SECTIONS=[
@@ -272,7 +268,7 @@
   };
 
   // VIN: scan the barcode with the camera, then decode it (free NHTSA lookup) to fill car and engine
-  var vinIn=document.getElementById('vinIn'),vinMsg=document.getElementById('vinMsg'),cam=document.getElementById('cam'),camVid=document.getElementById('camVid'),scanCtl=null;
+  var vinIn=document.getElementById('vinIn'),vinMsg=document.getElementById('vinMsg');
   function decodeVin(v){
     v=v.toUpperCase().replace(/[^A-Z0-9]/g,'');if(v.length===18&&v[0]==='I')v=v.slice(1);// some door-jamb barcodes add a leading I
     vinIn.value=v;if(v.length!==17){vinMsg.textContent=v.length?(17-v.length)+' characters to go':'';return;}
@@ -289,39 +285,7 @@
   vinIn.addEventListener('change',function(){decodeVin(vinIn.value);});
   // iPhone "Scan Text" (Live Text) types the whole VIN at once: decode as soon as 17 characters arrive
   vinIn.addEventListener('input',function(){var v=vinIn.value.toUpperCase().replace(/[^A-Z0-9]/g,'');if(v.length===17)decodeVin(v);});
-  // Camera scanning with zxing-cpp (WebAssembly): fast, reads sideways/upside down and tilted barcodes
-  var scanning=false,stream=null,cv=document.createElement('canvas'),cx=cv.getContext('2d',{willReadFrequently:true});
-  var ANGLES=[0,20,-20,40,-40];// tryRotate covers 90/180/270; these cover tilt in between
-  function stopScan(){scanning=false;if(stream)stream.getTracks().forEach(function(t){t.stop();});stream=null;camVid.srcObject=null;cam.hidden=true;}
-  document.getElementById('camClose').onclick=stopScan;
-  function asVin(s){s=String(s).toUpperCase().replace(/[^A-Z0-9]/g,'');if(s.length===18&&s[0]==='I')s=s.slice(1);return s.length===17&&!/[IOQ]/.test(s)?s:null;}
-  function frame(i){
-    if(!scanning)return;
-    if(camVid.readyState<2||!camVid.videoWidth)return setTimeout(function(){frame(i);},60);
-    var k=Math.min(1,1280/Math.max(camVid.videoWidth,camVid.videoHeight)),w=camVid.videoWidth*k,h=camVid.videoHeight*k;
-    var a=ANGLES[i%ANGLES.length]*Math.PI/180,W=Math.ceil(Math.abs(w*Math.cos(a))+Math.abs(h*Math.sin(a))),H=Math.ceil(Math.abs(w*Math.sin(a))+Math.abs(h*Math.cos(a)));
-    cv.width=W;cv.height=H;cx.setTransform(1,0,0,1,0,0);cx.fillStyle='#fff';cx.fillRect(0,0,W,H);cx.translate(W/2,H/2);cx.rotate(a);cx.drawImage(camVid,-w/2,-h/2,w,h);
-    ZXingWASM.readBarcodes(cx.getImageData(0,0,W,H),{formats:['Code39','Code128','DataMatrix','QRCode'],tryHarder:true,tryRotate:true,maxNumberOfSymbols:4})
-      .then(function(res){for(var n=0;n<res.length;n++){var v=asVin(res[n].text);if(v){stopScan();decodeVin(v);return;}}requestAnimationFrame(function(){frame(i+1);});})
-      .catch(function(){requestAnimationFrame(function(){frame(i+1);});});
-  }
-  document.getElementById('scanBtn').onclick=function(){
-    function start(){
-      cam.hidden=false;
-      navigator.mediaDevices.getUserMedia({audio:false,video:{facingMode:{ideal:'environment'},width:{ideal:1920},height:{ideal:1080}}})
-        .then(function(s){stream=s;camVid.srcObject=s;return camVid.play();})
-        .then(function(){scanning=true;frame(0);
-          // Flash: only shown when the phone's browser allows web pages to control it
-          var tr=stream.getVideoTracks()[0],cap=tr.getCapabilities?tr.getCapabilities():{},tb=document.getElementById('torchBtn'),on=false;
-          tb.hidden=!cap.torch;tb.textContent='Flash on';
-          tb.onclick=function(){on=!on;tr.applyConstraints({advanced:[{torch:on}]}).then(function(){tb.textContent=on?'Flash off':'Flash on';}).catch(function(){tb.hidden=true;});};
-        })
-        .catch(function(){stopScan();vinMsg.textContent='Camera not available. Type the VIN instead.';});
-    }
-    if(window.ZXingWASM)return start();
-    var s=document.createElement('script');s.src='https://cdn.jsdelivr.net/npm/zxing-wasm@3.1.6/dist/iife/reader/index.js';
-    s.onload=start;s.onerror=function(){vinMsg.textContent="Scanner couldn't load. Type the VIN instead.";};document.head.appendChild(s);
-  };
+  document.getElementById('scanBtn').onclick=function(){scanVin(decodeVin,function(m){vinMsg.textContent=m;});};
 
   // Short text summary to send the buyer with the PDF
   document.getElementById('textBtn').onclick=function(){
@@ -336,5 +300,6 @@
     else{prompt('Copy this summary:',msg);}
   };
 </script>
+<script src="scan.js"></script>
 </body>
 </html>

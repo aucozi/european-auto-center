@@ -111,6 +111,8 @@
   .vehicle .field{margin-bottom:16px}
   .vehicle .model-other{grid-column:1/-1;margin-top:-4px}
   .vin-msg{font-size:14px;margin-top:6px}
+  .vinrow{display:flex;gap:8px}.vinrow input{flex:1;min-width:0}
+  .scanbtn{flex:none;min-height:48px;padding:0 16px;border:2px solid var(--ink);border-radius:8px;background:var(--ink);color:#fff;font:700 15px Archivo,sans-serif;cursor:pointer}
   .vin-msg.ok{color:var(--ok);font-weight:600}.vin-msg.err{color:var(--signal)}
   .or{display:flex;align-items:center;gap:10px;font-size:13px;color:#5a5320;margin:-4px 0 10px}
   .or::before,.or::after{content:"";flex:1;height:1px;background:rgba(26,34,51,.2)}
@@ -295,7 +297,7 @@
           </fieldset>
           <div class="field">
             <label class="lbl" for="vin"><span id="carLabel">The car you're buying</span> <i>(VIN fills it in for you)</i></label>
-            <input id="vin" placeholder="17-character VIN, optional" maxlength="17" autocomplete="off" spellcheck="false" autocapitalize="characters">
+            <div class="vinrow"><input id="vin" placeholder="17-character VIN, optional" maxlength="17" autocomplete="off" spellcheck="false" autocapitalize="characters"><button type="button" class="scanbtn" id="scanBtn">Scan VIN</button></div>
             <div class="vin-msg" id="vin-msg" aria-live="polite"></div>
           </div>
           <div class="or">or pick it</div>
@@ -889,6 +891,13 @@
   })();
   // Header hairline once the page scrolls
   (function(){var h=document.getElementById('top-bar');function u(){h.classList.toggle('scrolled',window.scrollY>8);}window.addEventListener('scroll',u,{passive:true});u();})();
+</script>
+<script src="scan.js"></script>
+<script>
+  document.getElementById('scanBtn').onclick=function(){
+    var vin=document.getElementById('vin'),msg=document.getElementById('vin-msg');
+    scanVin(function(v){vin.value=v;vin.dispatchEvent(new Event('input',{bubbles:true}));},function(m){msg.textContent=m;msg.className='vin-msg err';});
+  };
 </script>
 </body>
 </html>
