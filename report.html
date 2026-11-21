@@ -83,6 +83,9 @@
   .item .note{display:none}
   .item:has(input[value=Watch]:checked) .note,.item:has(input[value=Fix]:checked) .note,.item:has(.note input:not(:placeholder-shown)) .note{display:block}
   .addph{cursor:pointer}
+  .codes{padding:14px 0 10px}
+  .codes .hint{margin:2px 0 6px}
+  table.est tr.addrow td{border:0;padding:10px 0 6px}
   .tally .g{color:var(--ok)}.tally .w{color:var(--watch)}.tally .x{color:var(--fix)}
   table.est{width:100%;border-collapse:collapse}
   table.est th{text-align:left;font-size:13px;color:var(--steel);border-bottom:2px solid var(--ink);padding:6px 4px}
@@ -190,17 +193,17 @@
 
   <div id="sections"></div>
 
-  <h2>Fault codes</h2>
-  <p class="hint">Every code found, including stored and history codes, with what it means.</p>
-  <textarea data-k="codes" placeholder="P0300 Random misfire (history)&#10;C1140 Hydraulic unit (stored)"></textarea>
+  <div class="codes" id="codesBlock"><label class="f" for="codesIn">Fault codes found</label>
+  <p class="hint">Every code, including stored and history codes, with what it means.</p>
+  <textarea id="codesIn" data-k="codes" placeholder="P0300 Random misfire (history)&#10;C1140 Hydraulic unit (stored)"></textarea></div>
 
   <h2>Repair estimate</h2>
   <table class="est">
     <thead><tr><th>Repair</th><th>Priority</th><th>Estimated cost</th><th class="noprint"></th></tr></thead>
     <tbody id="estRows"></tbody>
-    <tfoot><tr><td>Total</td><td></td><td id="estTotal">$0</td><td></td></tr></tfoot>
+    <tfoot><tr class="noprint addrow"><td colspan="4"><button class="btn btn-d" type="button" id="addRow">Add repair</button></td></tr>
+      <tr><td>Total</td><td></td><td id="estTotal">$0</td><td></td></tr></tfoot>
   </table>
-  <button class="btn btn-d noprint" type="button" id="addRow" style="margin-top:10px">Add repair</button>
 
   <h2>Photos</h2>
   <p class="hint noprint">Add photos of anything worth showing: leaks, damage, worn parts, the dash with codes.</p>
@@ -247,6 +250,8 @@
       row.querySelector('.name').textContent=name;sec.appendChild(row);
     });
   });
+
+  var cs=host.querySelector('details.sec');cs.appendChild(document.getElementById('codesBlock'));
 
   // Repair estimate rows
   var rows=document.getElementById('estRows');
