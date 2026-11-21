@@ -61,6 +61,13 @@
   .pills input:checked+label.p-fix{background:var(--fix);border-color:var(--fix);color:#fff}
   .pills input:checked+label.p-na{background:var(--steel);border-color:var(--steel);color:#fff}
   .pills input:focus-visible+label{outline:3px solid var(--ink);outline-offset:2px}
+  /* Phones: condition buttons become one full-width row of four big, equal tap targets */
+  @media (max-width:700px){
+    .item{grid-template-columns:1fr;gap:8px;padding:14px 0}
+    .pills{display:grid;grid-template-columns:repeat(4,1fr);gap:0;border:1.5px solid var(--line);border-radius:10px;overflow:hidden}
+    .pills label{display:flex;align-items:center;justify-content:center;min-height:46px;border:0;border-radius:0;border-left:1.5px solid var(--line);font-size:15px}
+    .pills label:first-of-type{border-left:0}
+  }
   .tally{display:flex;gap:16px;font-weight:700;margin:6px 0 0}
   .tally .g{color:var(--ok)}.tally .w{color:var(--watch)}.tally .x{color:var(--fix)}
   table.est{width:100%;border-collapse:collapse}
