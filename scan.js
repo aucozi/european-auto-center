@@ -2,6 +2,8 @@
 // Camera frames are decoded on the phone with zxing-cpp (WebAssembly); nothing is uploaded.
 // Usage: scanVin(function(vin){...}, function(message){...})
 (function(){
+  // Scanning is for phones and tablets only: hide the button on desktops (mouse/trackpad, no touch screen)
+  if(!matchMedia('(pointer: coarse)').matches){var sb=document.getElementById('scanBtn');if(sb)sb.hidden=true;var hm=document.getElementById('vinMsg');if(hm)hm.textContent='';}
   var LIB='https://cdn.jsdelivr.net/npm/zxing-wasm@3.1.6/dist/iife/reader/index.js';
   var ANGLES=[0,20,-20,40,-40];// tryRotate covers 90/180/270; these cover tilt in between
   var ov,vid,tb,scanning=false,stream=null,cv=document.createElement('canvas'),cx=cv.getContext('2d',{willReadFrequently:true}),done;
